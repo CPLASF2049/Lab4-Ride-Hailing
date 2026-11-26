@@ -1,0 +1,10 @@
+.env
+data/
+.runtime/
+node_modules/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+__pycache__/
+*.pyc
+.DS_Store

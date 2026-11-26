@@ -1,0 +1,19 @@
+order-query-1  | {"time":"2026-11-26T14:03:26.763Z","service":"order-query","action":"registered","instance_id":"order-query-7dc41aac4b7d-3102","address":"172.19.0.7","port":3102,"ttl_ms":10000}
+order-query-1  | {"time":"2026-11-26T14:03:26.764Z","service":"order-query","action":"listening","host":"0.0.0.0","port":3102,"instance_id":"order-query-7dc41aac4b7d-3102"}
+order-query-1  | {"time":"2026-11-26T14:03:26.790Z","service":"order-query","action":"bootstrap_ready","orders":1,"applied":1}
+order-query-1  | {"time":"2026-11-26T14:04:06.126Z","service":"order-query","action":"event_projected","order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975","event_id":"evt_b429abc0-5b35-4936-8770-ba63625afa26","version":1,"applied":true}
+order-query-1  | {"time":"2026-11-26T14:04:06.133Z","service":"order-query","action":"request","request_id":"1b0e78ad-306e-4b96-82ef-cdd63f03bf9b","method":"POST","path":"/internal/events","status":200,"order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975"}
+order-query-1  | {"time":"2026-11-26T14:04:06.387Z","service":"order-query","action":"event_projected","order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975","event_id":"evt_9117a67e-49a9-44ba-aa2f-3129c84b9667","version":2,"applied":true}
+order-query-1  | {"time":"2026-11-26T14:04:06.391Z","service":"order-query","action":"request","request_id":"07007471-b0d5-468d-aba4-45e042f76676","method":"POST","path":"/internal/events","status":200,"order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975"}
+order-query-1  | {"time":"2026-11-26T14:04:06.392Z","service":"order-query","action":"event_projected","order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975","event_id":"evt_03f8c462-13a2-49c5-815b-f0a954361222","version":3,"applied":true}
+order-query-1  | {"time":"2026-11-26T14:04:06.397Z","service":"order-query","action":"request","request_id":"9940f8cd-c45c-4a80-b175-929b3835bacf","method":"POST","path":"/internal/events","status":200,"order_id":"ord_8329a355-e7b2-4d33-ac97-46b505864975"}
+order-query-1  | {"time":"2026-11-26T14:04:08.071Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"DEPENDENCY_UNAVAILABLE","message":"服务 driver 暂时不可用，请稍后重试"}
+order-query-1  | {"time":"2026-11-26T14:04:08.175Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"NO_INSTANCE","attempts":2,"elapsed_ms":704,"circuit":"CLOSED"}
+order-query-1  | {"time":"2026-11-26T14:04:08.444Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"NO_INSTANCE","message":"服务 driver 当前没有可用实例"}
+order-query-1  | {"time":"2026-11-26T14:04:08.545Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"NO_INSTANCE","attempts":2,"elapsed_ms":101,"circuit":"CLOSED"}
+order-query-1  | {"time":"2026-11-26T14:04:08.803Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"NO_INSTANCE","message":"服务 driver 当前没有可用实例"}
+order-query-1  | {"time":"2026-11-26T14:04:08.904Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"NO_INSTANCE","attempts":2,"elapsed_ms":101,"circuit":"CLOSED"}
+order-query-1  | {"time":"2026-11-26T14:04:09.177Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"NO_INSTANCE","message":"服务 driver 当前没有可用实例"}
+order-query-1  | {"time":"2026-11-26T14:04:09.278Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"NO_INSTANCE","attempts":2,"elapsed_ms":101,"circuit":"CLOSED"}
+order-query-1  | {"time":"2026-11-26T14:04:09.548Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"NO_INSTANCE","message":"服务 driver 当前没有可用实例"}
+order-query-1  | {"time":"2026-11-26T14:04:09.649Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"NO_INSTANCE","attempts":2,"elapsed_ms":101,"circuit":"OPEN"}

@@ -1,0 +1,19 @@
+{
+  "name": "lab4-rideshare",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "高级软件工程 Lab4：沪行网约车微服务治理（注册发现、网关、容错、扩缩容、契约测试）",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "start": "node scripts/dev.mjs",
+    "test": "node --test --test-isolation=none tests/*.test.mjs tests/contracts/*.test.mjs services/*/*.test.mjs",
+    "test:unit": "node --test --test-isolation=none tests/order.unit.test.mjs tests/frontend.unit.test.mjs",
+    "test:component": "node --test --test-isolation=none tests/order.component.test.mjs tests/query.component.test.mjs tests/gateway.component.test.mjs tests/gateway.discovery.test.mjs tests/discovery.test.mjs tests/registry.test.mjs tests/bootstrap.test.mjs tests/contracts/*.test.mjs services/*/*.test.mjs",
+    "test:contracts": "node --test --test-isolation=none tests/contracts/*.test.mjs",
+    "test:e2e": "node scripts/acceptance.mjs",
+    "test:fault": "node scripts/fault-demo.mjs",
+    "check": "node scripts/check.mjs",
+    "reset": "node scripts/reset.mjs"
+  }
+}

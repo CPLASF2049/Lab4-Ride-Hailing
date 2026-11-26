@@ -1,0 +1,126 @@
+{
+  "executed_at": "2026-11-26T14:03:42.403Z",
+  "platform": "Docker Compose (Docker Desktop, Linux containers)",
+  "service": "order-query",
+  "order_id": "ord_edbda6be-abe9-4aa1-9565-6a144466527c",
+  "before": {
+    "instances": 1,
+    "checks": [
+      {
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ]
+  },
+  "after_scale_up": {
+    "instances": 2,
+    "checks": [
+      {
+        "instance": "order-query-3e10332b5ac6-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      },
+      {
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ],
+    "distribution": {
+      "order-query-7dc41aac4b7d-3102": 6,
+      "order-query-3e10332b5ac6-3102": 6
+    },
+    "samples": [
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "has_driver": true,
+        "partial": false
+      },
+      {
+        "status": 200,
+        "instance": "order-query-3e10332b5ac6-3102",
+        "has_driver": true,
+        "partial": false
+      }
+    ],
+    "ordered_ok": true
+  },
+  "after_scale_down": {
+    "instances": 1,
+    "checks": [
+      {
+        "instance": "order-query-7dc41aac4b7d-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ],
+    "remaining_instance": "order-query-7dc41aac4b7d-3102"
+  },
+  "commands": {
+    "scale_up": "docker compose up -d --scale order-query=2 --no-recreate",
+    "scale_down": "docker compose up -d --scale order-query=1 --no-recreate"
+  },
+  "compose_ps": "{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:02 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"851b08003934\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=9353014bdffcfc4a7e935102dbdfda9575cd3091e9e7037e18df96b55670d1d1,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.service=dispatch,com.docker.compose.version=5.5.1,com.docker.compose.container-number=1,com.docker.compose.depends_on=registry:service_healthy:false,com.docker.compose.replace=dispatch-1,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"1\",\"Mounts\":\"lab4-rideshare…\",\"Name\":\"lab4-rideshare-dispatch-1\",\"Names\":\"lab4-rideshare-dispatch-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"38 seconds ago\",\"Service\":\"dispatch\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 14 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:02 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"0c39d9213059\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=fef2fc691fa583aa1e3d0010e6a0d74f989f77a13b4c36d9d6e19a737c6a37dc,com.docker.compose.container-number=1,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.service=driver,com.docker.compose.depends_on=registry:service_healthy:false,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.replace=driver-1,com.docker.compose.version=5.5.1,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"1\",\"Mounts\":\"lab4-rideshare…\",\"Name\":\"lab4-rideshare-driver-1\",\"Names\":\"lab4-rideshare-driver-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"38 seconds ago\",\"Service\":\"driver\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 14 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:14 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"99398ed4dba3\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=c55c9231938ada3df2a6a34b0c741c2298560b766827807b66c8e348f6545e46,com.docker.compose.container-number=1,com.docker.compose.depends_on=order:service_started:false,order-query:service_started:false,driver:service_started:false,dispatch:service_started:false,pricing:service_started:false,registry:service_healthy:false,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.service=gateway,com.docker.compose.version=5.5.1,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.replace=gateway-1,desktop.docker.io/ports.scheme=v2,desktop.docker.io/ports/8083/tcp=127.0.0.1:8083\",\"LocalVolumes\":\"0\",\"Mounts\":\"\",\"Name\":\"lab4-rideshare-gateway-1\",\"Names\":\"lab4-rideshare-gateway-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"127.0.0.1:8083-\\u003e8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"127.0.0.1\",\"TargetPort\":8083,\"PublishedPort\":8083,\"Protocol\":\"tcp\"}],\"RunningFor\":\"26 seconds ago\",\"Service\":\"gateway\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 13 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:02 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"a4e3b8b49a23\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.replace=order-1,com.docker.compose.service=order,com.docker.compose.depends_on=registry:service_healthy:false,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.version=5.5.1,desktop.docker.io/ports.scheme=v2,com.docker.compose.config-hash=480d92925c283777ec0a9d287fff3fc17275c5af944686ee0cfc69bb22a4700a,com.docker.compose.container-number=1,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare\",\"LocalVolumes\":\"1\",\"Mounts\":\"lab4-rideshare…\",\"Name\":\"lab4-rideshare-order-1\",\"Names\":\"lab4-rideshare-order-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"38 seconds ago\",\"Service\":\"order\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 14 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:08 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"7dc41aac4b7d\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=50e7ea0959a1df29d3379b2beb68969c1a12ba618cc30b38ca0c83fcde46ffe0,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.version=5.5.1,desktop.docker.io/ports.scheme=v2,com.docker.compose.container-number=1,com.docker.compose.depends_on=order:service_started:false,registry:service_healthy:false,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.replace=order-query-1,com.docker.compose.service=order-query\",\"LocalVolumes\":\"0\",\"Mounts\":\"\",\"Name\":\"lab4-rideshare-order-query-1\",\"Names\":\"lab4-rideshare-order-query-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"32 seconds ago\",\"Service\":\"order-query\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 13 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:35 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"starting\",\"ID\":\"3e10332b5ac6\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=50e7ea0959a1df29d3379b2beb68969c1a12ba618cc30b38ca0c83fcde46ffe0,com.docker.compose.container-number=2,com.docker.compose.depends_on=registry:service_healthy:false,order:service_started:false,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.service=order-query,com.docker.compose.version=5.5.1,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"0\",\"Mounts\":\"\",\"Name\":\"lab4-rideshare-order-query-2\",\"Names\":\"lab4-rideshare-order-query-2\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"5 seconds ago\",\"Service\":\"order-query\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 4 seconds (health: starting)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:02 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"ac5bc66891fd\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=a72b048e4fabfe275bad0abd029121526b15f261406e1c7c01c773c269914408,com.docker.compose.container-number=1,com.docker.compose.depends_on=registry:service_healthy:false,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.replace=pricing-1,com.docker.compose.service=pricing,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.version=5.5.1,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"1\",\"Mounts\":\"lab4-rideshare…\",\"Name\":\"lab4-rideshare-pricing-1\",\"Names\":\"lab4-rideshare-pricing-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"8083/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"\",\"TargetPort\":8083,\"PublishedPort\":0,\"Protocol\":\"tcp\"}],\"RunningFor\":\"38 seconds ago\",\"Service\":\"pricing\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 14 seconds (healthy)\"}\n{\"Command\":\"\\\"docker-entrypoint.s…\\\"\",\"CreatedAt\":\"2026-11-26 22:03:01 +0800 CST\",\"Engine\":\"\",\"ExitCode\":0,\"Health\":\"healthy\",\"ID\":\"94f7a77e6bee\",\"Image\":\"lab4-rideshare:local\",\"Labels\":\"com.docker.compose.config-hash=ea64a741d3b45760bd89037ecb4a2fa7cebf13163be8ad3137d5d237742bab02,com.docker.compose.container-number=1,com.docker.compose.image=sha256:1266e76e9fbf44f013a2ebbe77796a1b0b7ae37c61020b711c695329e932cc23,com.docker.compose.oneoff=False,com.docker.compose.project=lab4-rideshare,desktop.docker.io/ports/8500/tcp=127.0.0.1:8500,com.docker.compose.depends_on=,com.docker.compose.project.config_files=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare\\\\compose.yaml,com.docker.compose.project.working_dir=E:\\\\desktop\\\\研一上\\\\高级软件工程\\\\lab4-rideshare,com.docker.compose.replace=registry-1,com.docker.compose.service=registry,com.docker.compose.version=5.5.1,desktop.docker.io/ports.scheme=v2\",\"LocalVolumes\":\"0\",\"Mounts\":\"\",\"Name\":\"lab4-rideshare-registry-1\",\"Names\":\"lab4-rideshare-registry-1\",\"Networks\":\"lab4-rideshare_default\",\"Ports\":\"127.0.0.1:8500-\\u003e8500/tcp\",\"Project\":\"lab4-rideshare\",\"Publishers\":[{\"URL\":\"127.0.0.1\",\"TargetPort\":8500,\"PublishedPort\":8500,\"Protocol\":\"tcp\"}],\"RunningFor\":\"39 seconds ago\",\"Service\":\"registry\",\"Size\":\"0B\",\"State\":\"running\",\"Status\":\"Up 20 seconds (healthy)\"}"
+}

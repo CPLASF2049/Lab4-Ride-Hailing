@@ -1,0 +1,842 @@
+﻿TAP version 13
+{"time":"2026-11-26T14:08:10.828Z","service":"driver","action":"request","request_id":"8e330ea4-a4d1-4d53-9362-c125164c51c3","method":"PUT","path":"/drivers/me/status","status":200}
+{"time":"2026-11-26T14:08:10.839Z","service":"driver","action":"request","request_id":"f1026345-7a61-43d2-934e-96ec2636acf6","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_565d24b1-0758-4708-8f29-007dcd153b03"}
+{"time":"2026-11-26T14:08:10.848Z","service":"pricing","action":"request","request_id":"0df74e11-594e-4fec-a0a7-dad06571e5ad","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:10.860Z","service":"order","action":"request","request_id":"655b2b6e-225a-4903-9bed-5d4a12921dbc","method":"POST","path":"/orders","status":201,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"service":"dispatch","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:10.870Z","service":"dispatch","action":"request","request_id":"4cd7e072-06a9-46ff-bffb-35f2d50b9d71","method":"POST","path":"/internal/events","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"service":"dispatch","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"offer_created","offer_id":"offer_d025c76f-c9e2-4d27-928f-c37bb2961c74","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"event_applied","version":2,"status":"ASSIGNING"}
+{"time":"2026-11-26T14:08:10.901Z","service":"dispatch","action":"request","request_id":"73e16cb4-24a9-4f98-8d3b-e214cce40887","method":"POST","path":"/internal/events","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"time":"2026-11-26T14:08:10.915Z","service":"dispatch","action":"request_error","request_id":"b62119a5-c700-414e-aecf-1861b8f70c49","method":"POST","path":"/internal/offers/offer_d025c76f-c9e2-4d27-928f-c37bb2961c74/claim","status":409,"code":"OFFER_EXPIRED","message":"派单已过期，请刷新列表"}
+{"time":"2026-11-26T14:08:10.924Z","service":"order","action":"job_done","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","job_id":"reserve:asg_31676ea8-f54c-4b03-8b69-5bd516f270f8","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:10.925Z","service":"order","action":"request","request_id":"d1594384-7ad2-4769-935e-0d1c957e01b9","method":"POST","path":"/internal/orders/ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8/accept","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"time":"2026-11-26T14:08:10.927Z","service":"dispatch","action":"request","request_id":"d1594384-7ad2-4769-935e-0d1c957e01b9","method":"POST","path":"/offers/offer_d025c76f-c9e2-4d27-928f-c37bb2961c74/accept","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"service":"driver","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"released"}
+{"time":"2026-11-26T14:08:10.950Z","service":"driver","action":"request","request_id":"79c463bb-9b76-4628-9cc3-9b6df1fb2f14","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"time":"2026-11-26T14:08:10.953Z","service":"dispatch","action":"request_error","request_id":"d91d9976-61b5-4874-b905-27c822a51bb2","method":"POST","path":"/internal/offers/offer_d025c76f-c9e2-4d27-928f-c37bb2961c74/resolve","status":409,"code":"OFFER_UNAVAILABLE","message":"该司机分配标识不属于当前派单"}
+{"time":"2026-11-26T14:08:10.961Z","service":"order","action":"job_done","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","job_id":"release:asg_31676ea8-f54c-4b03-8b69-5bd516f270f8","type":"RELEASE_DRIVER"}
+{"time":"2026-11-26T14:08:10.970Z","service":"order","action":"job_done","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","job_id":"resolve:asg_31676ea8-f54c-4b03-8b69-5bd516f270f8:FAILED","type":"RESOLVE_OFFER"}
+{"time":"2026-11-26T14:08:10.978Z","service":"order","action":"outbox_retry","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","event_id":"evt_e48b9323-42b1-49c0-9a6f-1e8a87e25998","destination":"dispatch","attempt":1,"code":"INJECTED_EVENT_DELAY"}
+{"time":"2026-11-26T14:08:10.980Z","service":"dispatch","action":"request","request_id":"fe9dad15-8665-4268-9890-18ba5bb2bdef","method":"POST","path":"/internal/events","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"service":"dispatch","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"event_applied","version":3,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:10.991Z","service":"dispatch","action":"request","request_id":"c28e0203-5282-4385-9278-feae7c1242d1","method":"POST","path":"/internal/events","status":200,"order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8"}
+{"service":"dispatch","order_id":"ord_135f06d9-c0a8-4c12-8285-7b0e6c473ab8","action":"offer_created","offer_id":"offer_7a3b5b8a-0c51-4762-a10a-6a9b371ebb3b","driver_id":"driver-2"}
+# Subtest: cross-service: ASSIGNING projected before an expired claim recovers when durable MATCHING event retries
+ok 1 - cross-service: ASSIGNING projected before an expired claim recovers when durable MATCHING event retries
+  ---
+  duration_ms: 315.4368
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:11.198Z","service":"driver","action":"request","request_id":"9452bb7e-4729-454b-a715-5890ee79bb22","method":"PUT","path":"/drivers/me/status","status":200}
+{"time":"2026-11-26T14:08:11.207Z","service":"driver","action":"request","request_id":"7d05b63f-be82-4986-8bda-1e8d444fa59b","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_e249baaa-68c2-494f-b0b8-f7595d7730c3"}
+{"time":"2026-11-26T14:08:11.221Z","service":"pricing","action":"request","request_id":"5828210d-78d1-494c-9bdf-14fe2358c83b","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:11.236Z","service":"order","action":"request","request_id":"29d8532a-c625-4e90-9d50-f5f88ee71200","method":"POST","path":"/orders","status":201,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.245Z","service":"dispatch","action":"request","request_id":"561e9a0b-a6f2-4a79-ab50-2380b21c0567","method":"POST","path":"/internal/events","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"offer_created","offer_id":"offer_5c96f396-7671-4e40-8044-aa7bfa669e64","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"offer_claimed","offer_id":"offer_5c96f396-7671-4e40-8044-aa7bfa669e64","assignment_id":"asg_d92cd4ed-62e2-46d0-9459-fdeb502e9cdf"}
+{"time":"2026-11-26T14:08:11.275Z","service":"dispatch","action":"request","request_id":"9e3130a1-c966-408d-90e9-c8b3b5cc831a","method":"POST","path":"/internal/offers/offer_5c96f396-7671-4e40-8044-aa7bfa669e64/claim","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"driver","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"reserved"}
+{"time":"2026-11-26T14:08:11.281Z","service":"driver","action":"request","request_id":"73a6ddca-26ba-4a87-b920-bf50e67af124","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"time":"2026-11-26T14:08:11.283Z","service":"order","action":"job_retry","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","job_id":"reserve:asg_d92cd4ed-62e2-46d0-9459-fdeb502e9cdf","code":"INJECTED_RESPONSE_LOST","attempt":1}
+{"time":"2026-11-26T14:08:11.284Z","service":"order","action":"request","request_id":"761b0f82-1321-4e5c-8778-a3ef416d0dee","method":"POST","path":"/internal/orders/ord_90c33e3e-efaa-4907-857a-39bdc0097bff/accept","status":202,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"time":"2026-11-26T14:08:11.285Z","service":"dispatch","action":"request","request_id":"761b0f82-1321-4e5c-8778-a3ef416d0dee","method":"POST","path":"/offers/offer_5c96f396-7671-4e40-8044-aa7bfa669e64/accept","status":202,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"event_applied","version":2,"status":"ASSIGNING"}
+{"time":"2026-11-26T14:08:11.291Z","service":"dispatch","action":"request","request_id":"5e736deb-7243-4e44-b332-6d8492c3f90c","method":"POST","path":"/internal/events","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"time":"2026-11-26T14:08:11.296Z","service":"driver","action":"request","request_id":"06f37593-2a9d-4743-8dcb-bea3bc2b1cce","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"offer_claimed","offer_id":"offer_5c96f396-7671-4e40-8044-aa7bfa669e64","assignment_id":"asg_d92cd4ed-62e2-46d0-9459-fdeb502e9cdf"}
+{"time":"2026-11-26T14:08:11.325Z","service":"dispatch","action":"request","request_id":"e60796d5-c32f-41e8-8c44-fbe2fab30eed","method":"POST","path":"/internal/offers/offer_5c96f396-7671-4e40-8044-aa7bfa669e64/claim","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"driver","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"reserved"}
+{"time":"2026-11-26T14:08:11.327Z","service":"driver","action":"request","request_id":"64de7094-83e4-4619-bc2e-6337637390f1","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"time":"2026-11-26T14:08:11.330Z","service":"order","action":"job_done","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","job_id":"reserve:asg_d92cd4ed-62e2-46d0-9459-fdeb502e9cdf","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:11.336Z","service":"dispatch","action":"request","request_id":"a927ad0f-c87f-4b84-af4e-19ca84ab9f62","method":"POST","path":"/internal/events","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"service":"dispatch","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","action":"event_applied","version":3,"status":"ACCEPTED"}
+{"time":"2026-11-26T14:08:11.341Z","service":"dispatch","action":"request","request_id":"90f8608b-e563-4cd4-800e-56e43cdf5690","method":"POST","path":"/internal/events","status":200,"order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff"}
+{"time":"2026-11-26T14:08:11.354Z","service":"dispatch","action":"request","request_id":"b6a5fea4-fae6-4664-aa9a-0ab6c21b770c","method":"POST","path":"/internal/offers/offer_5c96f396-7671-4e40-8044-aa7bfa669e64/resolve","status":200}
+{"time":"2026-11-26T14:08:11.355Z","service":"order","action":"job_done","order_id":"ord_90c33e3e-efaa-4907-857a-39bdc0097bff","job_id":"resolve:asg_d92cd4ed-62e2-46d0-9459-fdeb502e9cdf:ACCEPTED","type":"RESOLVE_OFFER"}
+# Subtest: cross-service: reserve committed but response lost recovers after restart, offline and both deadlines
+ok 2 - cross-service: reserve committed but response lost recovers after restart, offline and both deadlines
+  ---
+  duration_ms: 346.9842
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:11.460Z","service":"driver","action":"request","request_id":"4aed027e-f1ad-4057-828b-c3bddd4186c0","method":"PUT","path":"/drivers/me/status","status":200}
+{"time":"2026-11-26T14:08:11.465Z","service":"driver","action":"request","request_id":"216c5f1b-220a-48d4-818f-5a2a245cbd80","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_99dc1f8a-2e2e-4706-8d26-c79c77e12ced"}
+{"time":"2026-11-26T14:08:11.469Z","service":"pricing","action":"request","request_id":"5e5362d2-5db0-4777-809a-b026c5f66eb0","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:11.476Z","service":"order","action":"request","request_id":"b382f847-a0ca-4df9-bcb4-a513ff562a7b","method":"POST","path":"/orders","status":201,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"service":"dispatch","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.483Z","service":"dispatch","action":"request","request_id":"dc16c4fa-3ee0-4c17-98f9-0f84e52c983f","method":"POST","path":"/internal/events","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"service":"dispatch","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"offer_created","offer_id":"offer_a6de7285-e555-474b-95c8-a9b32d013dab","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"offer_claimed","offer_id":"offer_a6de7285-e555-474b-95c8-a9b32d013dab","assignment_id":"asg_c444f4eb-971b-4cae-a881-8be83e8bf313"}
+{"time":"2026-11-26T14:08:11.510Z","service":"dispatch","action":"request","request_id":"a91872bf-5cd8-4435-9154-a16bdea3b567","method":"POST","path":"/internal/offers/offer_a6de7285-e555-474b-95c8-a9b32d013dab/claim","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"time":"2026-11-26T14:08:11.516Z","service":"order","action":"request","request_id":"e9fcecc6-0b84-4ed1-82d1-58daf1a7a161","method":"POST","path":"/orders/ord_cb85728f-aa74-439c-a868-adf2866853b0/cancel","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"service":"driver","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"released"}
+{"time":"2026-11-26T14:08:11.522Z","service":"driver","action":"request","request_id":"a614d8d1-0e74-438c-8f06-7cf2b43989bf","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"time":"2026-11-26T14:08:11.524Z","service":"order","action":"job_done","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","job_id":"release:asg_c444f4eb-971b-4cae-a881-8be83e8bf313","type":"RELEASE_DRIVER"}
+{"service":"dispatch","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"event_applied","version":2,"status":"ASSIGNING"}
+{"time":"2026-11-26T14:08:11.531Z","service":"dispatch","action":"request","request_id":"269aa787-9b1d-4707-9a8a-cdedd46bf177","method":"POST","path":"/internal/events","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"service":"dispatch","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","action":"event_applied","version":3,"status":"CANCELLED"}
+{"time":"2026-11-26T14:08:11.533Z","service":"dispatch","action":"request","request_id":"99c6ea23-fd25-4ce0-b571-bea31b27d620","method":"POST","path":"/internal/events","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"time":"2026-11-26T14:08:11.539Z","service":"driver","action":"request_error","request_id":"e1766fc9-ea4d-425e-8e52-994b8e036389","method":"POST","path":"/internal/drivers/driver-1/reserve","status":409,"code":"RESERVATION_RELEASED","message":"该司机占用已释放，不能重复预占"}
+{"time":"2026-11-26T14:08:11.542Z","service":"order","action":"job_done","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","job_id":"reserve:asg_c444f4eb-971b-4cae-a881-8be83e8bf313","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:11.542Z","service":"order","action":"request","request_id":"ef602b64-04ed-4b54-b2de-d00e88796a95","method":"POST","path":"/internal/orders/ord_cb85728f-aa74-439c-a868-adf2866853b0/accept","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"time":"2026-11-26T14:08:11.543Z","service":"dispatch","action":"request","request_id":"ef602b64-04ed-4b54-b2de-d00e88796a95","method":"POST","path":"/offers/offer_a6de7285-e555-474b-95c8-a9b32d013dab/accept","status":200,"order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0"}
+{"time":"2026-11-26T14:08:11.547Z","service":"dispatch","action":"request","request_id":"26fba0f2-7731-4ac3-aff7-6565d8a2e703","method":"POST","path":"/internal/offers/offer_a6de7285-e555-474b-95c8-a9b32d013dab/resolve","status":200}
+{"time":"2026-11-26T14:08:11.549Z","service":"order","action":"job_done","order_id":"ord_cb85728f-aa74-439c-a868-adf2866853b0","job_id":"resolve:asg_c444f4eb-971b-4cae-a881-8be83e8bf313:FAILED","type":"RESOLVE_OFFER"}
+# Subtest: cross-service: cancellation release overtakes delayed reserve and its tombstone prevents occupation
+ok 3 - cross-service: cancellation release overtakes delayed reserve and its tombstone prevents occupation
+  ---
+  duration_ms: 194.4942
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:11.642Z","service":"driver","action":"request","request_id":"768c6611-3d7d-4fa2-b84f-2b66a0cac45e","method":"PUT","path":"/drivers/me/status","status":200}
+{"time":"2026-11-26T14:08:11.646Z","service":"driver","action":"request","request_id":"9b926a13-6f1d-4128-87cb-0f34be29cca3","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_eb029b5c-b7df-4d13-9138-a3ec5a677a35"}
+{"time":"2026-11-26T14:08:11.650Z","service":"pricing","action":"request","request_id":"bab3673a-342d-4a63-a5e5-1e8cc420e967","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:11.655Z","service":"order","action":"request","request_id":"1f66b15e-134e-4f4e-9278-14f2ca7358e9","method":"POST","path":"/orders","status":201,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.661Z","service":"dispatch","action":"request","request_id":"7779a3bb-720b-43b5-8a0b-a31368ce6ad2","method":"POST","path":"/internal/events","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"offer_created","offer_id":"offer_adbac314-ea24-4ae2-b08e-b6615c908f42","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"offer_claimed","offer_id":"offer_adbac314-ea24-4ae2-b08e-b6615c908f42","assignment_id":"asg_d66467e2-0de4-4aaf-b93e-12464fa3afac"}
+{"time":"2026-11-26T14:08:11.676Z","service":"dispatch","action":"request","request_id":"32c92468-5c73-4d7a-906c-d7519634c9e7","method":"POST","path":"/internal/offers/offer_adbac314-ea24-4ae2-b08e-b6615c908f42/claim","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"service":"driver","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"reserved"}
+{"time":"2026-11-26T14:08:11.680Z","service":"driver","action":"request","request_id":"40f5a772-b933-47aa-8a76-6aee6680d5aa","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.682Z","service":"order","action":"job_done","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","job_id":"reserve:asg_d66467e2-0de4-4aaf-b93e-12464fa3afac","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:11.683Z","service":"order","action":"request","request_id":"832b0981-18b4-4fc4-8fd6-452e9debaa05","method":"POST","path":"/internal/orders/ord_42d2a92c-b107-4f60-b398-f7da79684ee2/accept","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.683Z","service":"dispatch","action":"request","request_id":"832b0981-18b4-4fc4-8fd6-452e9debaa05","method":"POST","path":"/offers/offer_adbac314-ea24-4ae2-b08e-b6615c908f42/accept","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.687Z","service":"order","action":"request","request_id":"65d48776-de93-4ca0-b18f-c0c94ef8fe8d","method":"POST","path":"/orders/ord_42d2a92c-b107-4f60-b398-f7da79684ee2/cancel","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.691Z","service":"order","action":"job_retry","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","job_id":"resolve:asg_d66467e2-0de4-4aaf-b93e-12464fa3afac:ACCEPTED","code":"INJECTED_RESOLVE_DELAY","attempt":1}
+{"service":"driver","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"released"}
+{"time":"2026-11-26T14:08:11.693Z","service":"driver","action":"request","request_id":"ee2edb41-b498-4544-8938-505a41a81c35","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.695Z","service":"order","action":"job_done","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","job_id":"release:asg_d66467e2-0de4-4aaf-b93e-12464fa3afac","type":"RELEASE_DRIVER"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"event_applied","version":2,"status":"ASSIGNING"}
+{"time":"2026-11-26T14:08:11.703Z","service":"dispatch","action":"request","request_id":"6ab5d75d-4840-422f-9176-bc5f90396557","method":"POST","path":"/internal/events","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"event_applied","version":3,"status":"ACCEPTED"}
+{"time":"2026-11-26T14:08:11.706Z","service":"dispatch","action":"request","request_id":"b4d72357-5087-4830-bf4d-c445161ca815","method":"POST","path":"/internal/events","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"service":"dispatch","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","action":"event_applied","version":4,"status":"CANCELLED"}
+{"time":"2026-11-26T14:08:11.710Z","service":"dispatch","action":"request","request_id":"2b1d19a1-3e48-4cc6-bd49-d2cedea894c6","method":"POST","path":"/internal/events","status":200,"order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2"}
+{"time":"2026-11-26T14:08:11.717Z","service":"dispatch","action":"request_error","request_id":"8a967a7f-5a1b-4664-bba3-3c668db15e9a","method":"POST","path":"/offers/offer_adbac314-ea24-4ae2-b08e-b6615c908f42/accept","status":409,"code":"OFFER_UNAVAILABLE","message":"派单已失效，请刷新列表"}
+{"time":"2026-11-26T14:08:11.721Z","service":"dispatch","action":"request","request_id":"79b541fa-b9d5-458a-96f8-6cbe3b2d9d97","method":"POST","path":"/internal/offers/offer_adbac314-ea24-4ae2-b08e-b6615c908f42/resolve","status":200}
+{"time":"2026-11-26T14:08:11.723Z","service":"order","action":"job_done","order_id":"ord_42d2a92c-b107-4f60-b398-f7da79684ee2","job_id":"resolve:asg_d66467e2-0de4-4aaf-b93e-12464fa3afac:ACCEPTED","type":"RESOLVE_OFFER"}
+# Subtest: cross-service: a delayed successful resolve after cancellation remains harmless and frees the driver
+ok 4 - cross-service: a delayed successful resolve after cancellation remains harmless and frees the driver
+  ---
+  duration_ms: 170.776
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.747Z","service":"dispatch","action":"request","request_id":"9266a611-813e-4588-8e82-53360dc7ba00","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_41dd57b1-b872-4e49-89d4-5b344754e0a2","driver_id":"driver-1"}
+{"time":"2026-11-26T14:08:11.755Z","service":"dispatch","action":"request_error","request_id":"ce22768f-f315-494d-97c2-c509b29e21c8","method":"POST","path":"/offers/offer_41dd57b1-b872-4e49-89d4-5b344754e0a2/reject","status":403,"code":"FORBIDDEN","message":"只能操作派发给自己的订单"}
+{"time":"2026-11-26T14:08:11.756Z","service":"dispatch","action":"request_error","request_id":"e17148f1-6882-4202-b00c-690089348d81","method":"POST","path":"/offers/offer_41dd57b1-b872-4e49-89d4-5b344754e0a2/accept","status":403,"code":"FORBIDDEN","message":"只能操作派发给自己的订单"}
+{"time":"2026-11-26T14:08:11.757Z","service":"dispatch","action":"request_error","request_id":"c2dc48a1-9a36-42fd-8cd0-75360081854a","method":"GET","path":"/drivers/me/offers","status":403,"code":"FORBIDDEN","message":"当前身份无权执行此操作"}
+{"service":"dispatch","order_id":"order-1","action":"offer_rejected","offer_id":"offer_41dd57b1-b872-4e49-89d4-5b344754e0a2","driver_id":"driver-1"}
+{"time":"2026-11-26T14:08:11.759Z","service":"dispatch","action":"request","request_id":"a360a63a-4b32-481f-80f2-164532df866d","method":"POST","path":"/offers/offer_41dd57b1-b872-4e49-89d4-5b344754e0a2/reject","status":200}
+{"time":"2026-11-26T14:08:11.761Z","service":"dispatch","action":"request_error","request_id":"1afcb34f-56ca-41ad-b828-866ff3969cbe","method":"POST","path":"/offers/offer_41dd57b1-b872-4e49-89d4-5b344754e0a2/reject","status":409,"code":"OFFER_UNAVAILABLE","message":"只能拒绝尚未确认的派单"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_0ca55c57-e151-45a2-9df1-318f738e10a3","driver_id":"driver-2"}
+{"service":"dispatch","order_id":"order-1","action":"offer_rejected","offer_id":"offer_0ca55c57-e151-45a2-9df1-318f738e10a3","driver_id":"driver-2"}
+{"time":"2026-11-26T14:08:11.764Z","service":"dispatch","action":"request","request_id":"5e951e8e-3d14-44be-b4eb-2c24f50182ae","method":"POST","path":"/offers/offer_0ca55c57-e151-45a2-9df1-318f738e10a3/reject","status":200}
+{"time":"2026-11-26T14:08:11.768Z","service":"mock-order","action":"request","request_id":"bbfe4053-4164-4a7c-9e39-28aa04222d34","method":"POST","path":"/internal/orders/order-1/fail-matching","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"matching_failed","reason":"ALL_REJECTED"}
+# Subtest: offers follow sorted driver IDs once each; rejects exhaust candidates without waiting forever
+ok 5 - offers follow sorted driver IDs once each; rejects exhaust candidates without waiting forever
+  ---
+  duration_ms: 31.0375
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.778Z","service":"dispatch","action":"request","request_id":"3b5bc935-ca56-4bb1-876f-612e9c2df63d","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.780Z","service":"mock-driver","action":"request_error","request_id":"dc5a37df-59de-4318-afc9-af53bfd7ec5d","method":"GET","path":"/internal/drivers","status":503,"code":"DRIVER_DOWN","message":"Unavailable"}
+{"service":"dispatch","order_id":"order-1","action":"worker_retry","code":"DRIVER_DOWN"}
+{"time":"2026-11-26T14:08:11.785Z","service":"mock-order","action":"request_error","request_id":"98060ab8-4058-4500-a5c9-67d6d905c71f","method":"POST","path":"/internal/orders/order-1/fail-matching","status":503,"code":"ORDER_DOWN","message":"Unavailable"}
+{"service":"dispatch","order_id":"order-1","action":"worker_retry","code":"ORDER_DOWN"}
+{"time":"2026-11-26T14:08:11.788Z","service":"mock-order","action":"request_error","request_id":"8365f287-6965-4478-8c67-d756a5e6a9d6","method":"POST","path":"/internal/orders/order-1/fail-matching","status":409,"code":"ORDER_ASSIGNING","message":"Saga is confirming"}
+{"service":"dispatch","order_id":"order-1","action":"worker_retry","code":"ORDER_ASSIGNING"}
+{"time":"2026-11-26T14:08:11.792Z","service":"mock-order","action":"request","request_id":"f3476f16-0a4e-4bc8-b861-87b18b234d71","method":"POST","path":"/internal/orders/order-1/fail-matching","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"matching_failed","reason":"NO_DRIVER"}
+# Subtest: no available driver fails immediately, and failed dependency calls retain retryable work
+ok 6 - no available driver fails immediately, and failed dependency calls retain retryable work
+  ---
+  duration_ms: 22.9228
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.800Z","service":"dispatch","action":"request","request_id":"ad563df3-ff0d-4a07-91e6-a2cb256c09df","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_3622f9f8-e729-4b29-801a-514739a81f44","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_expired","offer_id":"offer_3622f9f8-e729-4b29-801a-514739a81f44"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_59d85e35-185f-4c44-b317-606d623ae701","driver_id":"driver-2"}
+{"time":"2026-11-26T14:08:11.808Z","service":"mock-order","action":"request","request_id":"39f799bc-5e90-4963-88c4-f8495dc9a934","method":"POST","path":"/internal/orders/order-1/fail-matching","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"matching_failed","reason":"MATCH_TIMEOUT"}
+# Subtest: pending expiration advances once and the overall deadline produces MATCH_TIMEOUT
+ok 7 - pending expiration advances once and the overall deadline produces MATCH_TIMEOUT
+  ---
+  duration_ms: 16.8054
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.838Z","service":"dispatch","action":"request","request_id":"0904209f-adf5-4320-9144-e3308674c1cc","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_ef656cc3-dbab-49eb-8a20-4abb56270be0","driver_id":"driver-1"}
+{"time":"2026-11-26T14:08:11.845Z","service":"dispatch","action":"request_error","request_id":"e923c8ae-ce9c-4a82-95c4-e119b3b1343f","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/claim","status":409,"code":"OFFER_UNAVAILABLE","message":"派单不属于指定订单或司机"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_ef656cc3-dbab-49eb-8a20-4abb56270be0","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.849Z","service":"dispatch","action":"request","request_id":"24424b89-d76b-4213-84ee-9a2cec6dd91d","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/claim","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_ef656cc3-dbab-49eb-8a20-4abb56270be0","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.865Z","service":"dispatch","action":"request","request_id":"4092a4e8-06b0-4fe6-b8e5-f2f02fbc0280","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/claim","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.867Z","service":"dispatch","action":"request_error","request_id":"603ca5b6-0caa-43d8-856d-3cecc2467a3f","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/claim","status":409,"code":"OFFER_UNAVAILABLE","message":"派单已失效，请刷新列表"}
+{"time":"2026-11-26T14:08:11.869Z","service":"dispatch","action":"request_error","request_id":"a9829783-b03f-4748-943a-660cb9d81393","method":"POST","path":"/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/reject","status":409,"code":"OFFER_UNAVAILABLE","message":"只能拒绝尚未确认的派单"}
+{"time":"2026-11-26T14:08:11.871Z","service":"dispatch","action":"request_error","request_id":"e6cdabf1-4a22-41e8-8eb9-83ec34e1e22c","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/resolve","status":409,"code":"OFFER_UNAVAILABLE","message":"该司机分配标识不属于当前派单"}
+{"service":"dispatch","order_id":"order-1","action":"offer_resolved","offer_id":"offer_ef656cc3-dbab-49eb-8a20-4abb56270be0","status":"FAILED"}
+{"time":"2026-11-26T14:08:11.877Z","service":"dispatch","action":"request","request_id":"bdaff110-b321-4c85-832d-2a0bdcfd2719","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/resolve","status":200}
+{"time":"2026-11-26T14:08:11.879Z","service":"dispatch","action":"request_error","request_id":"af7d3744-cd76-4d03-a3c1-3d427fb01f00","method":"POST","path":"/internal/offers/offer_ef656cc3-dbab-49eb-8a20-4abb56270be0/claim","status":409,"code":"OFFER_UNAVAILABLE","message":"派单已失效，请刷新列表"}
+{"time":"2026-11-26T14:08:11.881Z","service":"mock-order","action":"request","request_id":"3620f04a-6004-4c06-b90f-c75a3f3821a6","method":"POST","path":"/internal/orders/order-1/fail-matching","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"matching_failed","reason":"MATCH_TIMEOUT"}
+# Subtest: claims bind identity atomically, survive restart and ignore elapsed offer/overall deadlines
+ok 8 - claims bind identity atomically, survive restart and ignore elapsed offer/overall deadlines
+  ---
+  duration_ms: 76.4831
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.898Z","service":"dispatch","action":"request","request_id":"148e632f-e5da-45ce-908d-4364b5580d2c","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_b634a0cf-9d20-4b19-a7f7-14dbaff6195e","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":3,"status":"CANCELLED"}
+{"time":"2026-11-26T14:08:11.903Z","service":"dispatch","action":"request","request_id":"a6e33b71-fe96-401a-ab1e-da34bf140b80","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.905Z","service":"dispatch","action":"request","request_id":"b2db7d93-e636-43eb-b1e7-40c44c8fb81e","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.908Z","service":"dispatch","action":"request","request_id":"ac9c37ee-5d64-4c7d-8f34-d659953fded5","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":4,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.910Z","service":"dispatch","action":"request","request_id":"b43c4857-eb56-41cb-9717-eac8245ac9bb","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+# Subtest: inbox duplicate and stale versions cannot undo cancellation or resurrect matching
+ok 9 - inbox duplicate and stale versions cannot undo cancellation or resurrect matching
+  ---
+  duration_ms: 25.7821
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.919Z","service":"dispatch","action":"request","request_id":"1d700f27-2fe8-49d8-bc8a-6a5605766814","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_eb1971d9-d3de-4cc1-ae15-d6dc4df0ef69","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_eb1971d9-d3de-4cc1-ae15-d6dc4df0ef69","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.924Z","service":"dispatch","action":"request","request_id":"9fe87ea7-84b5-4538-a24b-ae726ab779b3","method":"POST","path":"/internal/offers/offer_eb1971d9-d3de-4cc1-ae15-d6dc4df0ef69/claim","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":2,"status":"CANCELLED"}
+{"time":"2026-11-26T14:08:11.928Z","service":"dispatch","action":"request","request_id":"3bce4414-6ff0-4814-9f3c-9daef13f0403","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.929Z","service":"dispatch","action":"request","request_id":"21f81592-2f56-4909-86a0-07caa693b628","method":"POST","path":"/internal/offers/offer_eb1971d9-d3de-4cc1-ae15-d6dc4df0ef69/resolve","status":200}
+# Subtest: CANCELLED before saga resolution invalidates a claim and resolution never resumes search
+ok 10 - CANCELLED before saga resolution invalidates a claim and resolution never resumes search
+  ---
+  duration_ms: 17.7459
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.937Z","service":"dispatch","action":"request","request_id":"e69e7d99-3e80-4c3d-b1f8-23bfb093ba98","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_c263c0a7-a0d6-42df-9749-7e0dbb9003d3","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_c263c0a7-a0d6-42df-9749-7e0dbb9003d3","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.942Z","service":"dispatch","action":"request","request_id":"dc182dd7-4977-4553-8366-f435734ee39b","method":"POST","path":"/internal/offers/offer_c263c0a7-a0d6-42df-9749-7e0dbb9003d3/claim","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":2,"status":"FAILED"}
+{"time":"2026-11-26T14:08:11.945Z","service":"dispatch","action":"request","request_id":"f739b950-b3ac-46a3-bef1-9dfb1a886664","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.946Z","service":"dispatch","action":"request","request_id":"def7f17a-2d99-4c4c-8ce7-72c96efffc4d","method":"POST","path":"/internal/offers/offer_c263c0a7-a0d6-42df-9749-7e0dbb9003d3/resolve","status":200}
+# Subtest: FAILED before saga resolution invalidates a claim and resolution never resumes search
+ok 11 - FAILED before saga resolution invalidates a claim and resolution never resumes search
+  ---
+  duration_ms: 17.3182
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.955Z","service":"dispatch","action":"request","request_id":"759e290a-9079-46c7-aa2d-c20ad4df2c4c","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_162c0871-65d3-4f2b-a636-4a874bd7744f","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_162c0871-65d3-4f2b-a636-4a874bd7744f","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.961Z","service":"dispatch","action":"request","request_id":"ee42adfe-8c1c-4e53-8759-296ef2d07ffc","method":"POST","path":"/internal/offers/offer_162c0871-65d3-4f2b-a636-4a874bd7744f/claim","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":3,"status":"ACCEPTED"}
+{"time":"2026-11-26T14:08:11.964Z","service":"dispatch","action":"request","request_id":"3b590b0e-50a2-47ce-bf46-1056aa0fa54f","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.965Z","service":"dispatch","action":"request","request_id":"14e5e36f-b920-44e1-bda7-d18b42aa5f2a","method":"POST","path":"/internal/offers/offer_162c0871-65d3-4f2b-a636-4a874bd7744f/resolve","status":200}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_162c0871-65d3-4f2b-a636-4a874bd7744f","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.967Z","service":"dispatch","action":"request","request_id":"1fd21835-fab3-4cc1-8ba9-14d8184cb5bc","method":"POST","path":"/internal/offers/offer_162c0871-65d3-4f2b-a636-4a874bd7744f/claim","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.968Z","service":"dispatch","action":"request","request_id":"0288cb12-bde4-4e0f-b75d-cbb33a76caab","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.972Z","service":"mock-order","action":"request","request_id":"1677b487-8229-4c9f-85e2-95ea147bc7d2","method":"POST","path":"/internal/orders/order-1/accept","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:11.972Z","service":"dispatch","action":"request","request_id":"1677b487-8229-4c9f-85e2-95ea147bc7d2","method":"POST","path":"/offers/offer_162c0871-65d3-4f2b-a636-4a874bd7744f/accept","status":200,"order_id":"order-1"}
+# Subtest: accepted event may arrive before resolve, and repeats remain harmless after original expiry
+ok 12 - accepted event may arrive before resolve, and repeats remain harmless after original expiry
+  ---
+  duration_ms: 25.9376
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.982Z","service":"dispatch","action":"request","request_id":"7b6b7efa-0629-4c7e-a1b4-70c5b29946c4","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_5203af35-57fe-4da1-b40e-ceebc9cbaea9","driver_id":"driver-1"}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":2,"status":"ASSIGNING"}
+{"time":"2026-11-26T14:08:11.987Z","service":"dispatch","action":"request","request_id":"7636f14a-ae06-4cdd-b7c9-c1416e213544","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_claimed","offer_id":"offer_5203af35-57fe-4da1-b40e-ceebc9cbaea9","assignment_id":"assignment-1"}
+{"time":"2026-11-26T14:08:11.989Z","service":"dispatch","action":"request","request_id":"1d78b501-d1e9-433c-801d-9a12d3e36f38","method":"POST","path":"/internal/offers/offer_5203af35-57fe-4da1-b40e-ceebc9cbaea9/claim","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_resolved","offer_id":"offer_5203af35-57fe-4da1-b40e-ceebc9cbaea9","status":"FAILED"}
+{"time":"2026-11-26T14:08:11.992Z","service":"dispatch","action":"request","request_id":"cc2241b0-9e89-42ca-bfb0-f4f67ad769c9","method":"POST","path":"/internal/offers/offer_5203af35-57fe-4da1-b40e-ceebc9cbaea9/resolve","status":200}
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":3,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:11.994Z","service":"dispatch","action":"request","request_id":"cddc6ef0-23c8-49d9-bd55-b6cb2afa29bf","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_3d599088-7ff2-468d-a667-f4b6907b4300","driver_id":"driver-2"}
+# Subtest: failed saga resolution resumes searching only after newer MATCHING projection
+ok 13 - failed saga resolution resumes searching only after newer MATCHING projection
+  ---
+  duration_ms: 23.2943
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:12.024Z","service":"dispatch","action":"request","request_id":"e6c7de2e-4ec9-47a0-875c-b9905b45e049","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_494af0fe-3728-4e1e-bc76-c1ff02b30f9f","driver_id":"driver-1"}
+{"time":"2026-11-26T14:08:12.035Z","service":"dispatch","action":"request_error","request_id":"e551e8a2-5ae3-46eb-ab3c-75e0a2b06762","method":"POST","path":"/internal/offers/offer_494af0fe-3728-4e1e-bc76-c1ff02b30f9f/claim","status":409,"code":"OFFER_EXPIRED","message":"派单已过期，请刷新列表"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_e7fc2e3d-49d3-47c4-a0a1-039a58c10fea","driver_id":"driver-2"}
+# Subtest: expired claim rejection commits EXPIRED and tried drivers persist across restart
+ok 14 - expired claim rejection commits EXPIRED and tried drivers persist across restart
+  ---
+  duration_ms: 54.8358
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:12.059Z","service":"dispatch","action":"request","request_id":"8cfb5a30-13d4-437b-ba9a-affa01cbb364","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_a571f9f1-36ea-4645-a928-5413cb926406","driver_id":"driver-1"}
+{"time":"2026-11-26T14:08:12.065Z","service":"mock-order","action":"request","request_id":"9313bd07-db56-42b2-8eba-d2cef8d9a4e6","method":"POST","path":"/internal/orders/order-1/accept","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:12.065Z","service":"dispatch","action":"request","request_id":"9313bd07-db56-42b2-8eba-d2cef8d9a4e6","method":"POST","path":"/offers/offer_a571f9f1-36ea-4645-a928-5413cb926406/accept","status":202,"order_id":"order-1"}
+# Subtest: accept forwards identity and upstream body, including asynchronous 202 confirmation
+ok 15 - accept forwards identity and upstream body, including asynchronous 202 confirmation
+  ---
+  duration_ms: 14.1074
+  type: 'test'
+  ...
+{"service":"dispatch","order_id":"order-1","action":"event_applied","version":1,"status":"MATCHING"}
+{"time":"2026-11-26T14:08:12.074Z","service":"dispatch","action":"request","request_id":"e6ae819d-ee42-43bf-8606-6db65d596470","method":"POST","path":"/internal/events","status":200,"order_id":"order-1"}
+{"service":"dispatch","order_id":"order-1","action":"offer_created","offer_id":"offer_bdbd1fbe-4de5-4789-8e91-d4742a3e31b6","driver_id":"driver-1"}
+# Subtest: overlapping worker ticks share one execution and do not produce duplicate offers
+ok 16 - overlapping worker ticks share one execution and do not produce duplicate offers
+  ---
+  duration_ms: 11.2152
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.084Z","service":"driver","action":"request_error","request_id":"d823a619-e80c-4a9b-ad19-5abe8520798c","method":"GET","path":"/drivers/me","status":403,"code":"FORBIDDEN","message":"当前身份无权执行此操作"}
+{"time":"2026-11-26T14:08:12.085Z","service":"driver","action":"request_error","request_id":"d59644b9-8f8c-471a-b4a7-779dd9c13de1","method":"GET","path":"/internal/drivers","status":401,"code":"UNAUTHORIZED","message":"内部调用认证失败"}
+{"time":"2026-11-26T14:08:12.087Z","service":"driver","action":"request_error","request_id":"e9f9cb0c-ce60-4b20-88a3-31e681b21306","method":"PUT","path":"/drivers/me/status","status":400,"code":"INVALID_REQUEST","message":"上线状态须为布尔值（true或false）"}
+{"time":"2026-11-26T14:08:12.088Z","service":"driver","action":"request_error","request_id":"af03fe25-6b8a-4428-92d5-b77915bfafbb","method":"POST","path":"/internal/drivers/driver-1/reserve","status":409,"code":"DRIVER_OFFLINE","message":"司机当前离线，无法接单"}
+{"time":"2026-11-26T14:08:12.091Z","service":"driver","action":"request","request_id":"06b805af-f123-4bef-bf4d-e6c6efbd055a","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"driver","order_id":"order-1","action":"reserved"}
+{"time":"2026-11-26T14:08:12.093Z","service":"driver","action":"request","request_id":"79e26c24-3085-4984-8612-da88d9865425","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"order-1"}
+{"time":"2026-11-26T14:08:12.095Z","service":"driver","action":"request","request_id":"24bf1e64-1867-411a-a92c-ad0d61e84319","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"driver","order_id":"order-1","action":"reserved"}
+{"time":"2026-11-26T14:08:12.096Z","service":"driver","action":"request","request_id":"e4d6264a-5758-43cb-ac9f-5b0563122769","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"order-1"}
+{"service":"driver","order_id":"order-1","action":"released"}
+{"time":"2026-11-26T14:08:12.098Z","service":"driver","action":"request","request_id":"ddbd2442-e8d9-484e-80e0-fcae68a6b749","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"order-1"}
+# Subtest: drivers begin offline; status validates role and boolean while preserving occupation
+ok 17 - drivers begin offline; status validates role and boolean while preserving occupation
+  ---
+  duration_ms: 21.0228
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.104Z","service":"driver","action":"request","request_id":"07801c41-0746-4ae4-bbea-96bd1a23d704","method":"PUT","path":"/drivers/me/status","status":200}
+{"time":"2026-11-26T14:08:12.106Z","service":"driver","action":"request","request_id":"8544dbcb-27ae-4175-a01c-fbf8d78dbe28","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"driver","order_id":"order-a","action":"reserved"}
+{"time":"2026-11-26T14:08:12.111Z","service":"driver","action":"request","request_id":"b9472914-b541-4902-a3c7-a456ea0f84d1","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"order-a"}
+{"time":"2026-11-26T14:08:12.111Z","service":"driver","action":"request_error","request_id":"c8751684-65bc-4493-b306-3dba796d0073","method":"POST","path":"/internal/drivers/driver-1/reserve","status":409,"code":"DRIVER_BUSY","message":"司机已有进行中的订单"}
+{"time":"2026-11-26T14:08:12.113Z","service":"driver","action":"request_error","request_id":"f75458af-269e-4ed7-bea2-d0ffab39cc08","method":"POST","path":"/internal/drivers/driver-2/reserve","status":409,"code":"DRIVER_BUSY","message":"该订单已预占其他司机"}
+# Subtest: reservation races enforce one active order per driver and one driver per order
+ok 18 - reservation races enforce one active order per driver and one driver per order
+  ---
+  duration_ms: 15.3318
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.138Z","service":"driver","action":"request","request_id":"79fc72f2-f188-4b3e-ac79-4cf7dc142d97","method":"PUT","path":"/drivers/me/status","status":200}
+{"service":"driver","order_id":"cancelled","action":"released"}
+{"time":"2026-11-26T14:08:12.142Z","service":"driver","action":"request","request_id":"2c71602a-041b-430a-917a-0f6dc5682c80","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"cancelled"}
+{"time":"2026-11-26T14:08:12.152Z","service":"driver","action":"request_error","request_id":"8512eae7-b65a-416a-a144-84d87d114d8a","method":"POST","path":"/internal/drivers/driver-1/reserve","status":409,"code":"RESERVATION_RELEASED","message":"该司机占用已释放，不能重复预占"}
+{"service":"driver","order_id":"new-order","action":"reserved"}
+{"time":"2026-11-26T14:08:12.159Z","service":"driver","action":"request","request_id":"428f91e5-f6f7-4b59-b956-0decfe82c0db","method":"POST","path":"/internal/drivers/driver-1/reserve","status":200,"order_id":"new-order"}
+{"service":"driver","order_id":"cancelled","action":"released"}
+{"time":"2026-11-26T14:08:12.161Z","service":"driver","action":"request","request_id":"81bbc7be-1496-4bba-b9c5-679b1272d4f8","method":"POST","path":"/internal/drivers/driver-1/release","status":200,"order_id":"cancelled"}
+{"time":"2026-11-26T14:08:12.162Z","service":"driver","action":"request_error","request_id":"30343dea-2d5e-471b-b4e8-fc32a232671c","method":"POST","path":"/internal/drivers/driver-2/release","status":409,"code":"ASSIGNMENT_CONFLICT","message":"该司机分配标识已用于其他订单或司机"}
+# Subtest: release-before-reserve tombstones and conditional old releases survive restart
+ok 19 - release-before-reserve tombstones and conditional old releases survive restart
+  ---
+  duration_ms: 51.276
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.172Z","service":"pricing","action":"request_error","request_id":"13eede8e-8fc3-4c60-a262-fc90faf5f69e","method":"POST","path":"/orders/estimate","status":401,"code":"UNAUTHORIZED","message":"请先选择账号登录"}
+{"time":"2026-11-26T14:08:12.174Z","service":"pricing","action":"request_error","request_id":"f6179298-f603-479b-b0ea-0b928379489d","method":"POST","path":"/orders/estimate","status":403,"code":"FORBIDDEN","message":"当前身份无权执行此操作"}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_3ef398de-eb73-4fbc-bc50-65c712ec5762"}
+{"time":"2026-11-26T14:08:12.176Z","service":"pricing","action":"request","request_id":"5af54842-fec2-40f3-876e-a4489fe01dbe","method":"POST","path":"/orders/estimate","status":200}
+# Subtest: Shanghai WGS84 presets generate persistent estimated quotes tied to the rider
+ok 20 - Shanghai WGS84 presets generate persistent estimated quotes tied to the rider
+  ---
+  duration_ms: 11.6662
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.182Z","service":"pricing","action":"request_error","request_id":"66c37f11-de06-42bc-b0aa-eb6b34775d88","method":"POST","path":"/orders/estimate","status":400,"code":"INVALID_PLACE","message":"请选择系统提供的上海预设地点"}
+{"time":"2026-11-26T14:08:12.184Z","service":"pricing","action":"request_error","request_id":"236c9349-a1b1-413e-8448-728d40a69509","method":"POST","path":"/orders/estimate","status":400,"code":"INVALID_PLACE","message":"请选择系统提供的上海预设地点"}
+{"time":"2026-11-26T14:08:12.186Z","service":"pricing","action":"request_error","request_id":"c1123d29-4a19-45e4-b6b2-b8cd68a1fa2a","method":"POST","path":"/orders/estimate","status":400,"code":"SAME_PLACE","message":"起点和终点不能相同"}
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_c4addf26-a56e-4a39-a73f-e08a25654b41"}
+{"time":"2026-11-26T14:08:12.192Z","service":"pricing","action":"request","request_id":"677b9591-ddf3-4cc3-a6d5-93e2a13c7690","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:12.193Z","service":"pricing","action":"request_error","request_id":"bfbf433b-c89b-4240-949d-16d9fe376d92","method":"POST","path":"/internal/fare","status":404,"code":"ESTIMATE_NOT_FOUND","message":"预估报价不存在"}
+{"time":"2026-11-26T14:08:12.195Z","service":"pricing","action":"request_error","request_id":"f6dde559-14cd-43dd-a36f-f975cc2b2141","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.197Z","service":"pricing","action":"request_error","request_id":"e4d2c436-cc8c-4dad-aafd-5e092fc3a39d","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.199Z","service":"pricing","action":"request_error","request_id":"583eda5f-2402-45fb-97d7-85ad3548454c","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.200Z","service":"pricing","action":"request_error","request_id":"aa093ab0-de78-41ce-a2cd-6e0ec713258f","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.202Z","service":"pricing","action":"request_error","request_id":"46aff239-fba4-4782-9c0f-b0edd991785e","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.203Z","service":"pricing","action":"request_error","request_id":"375ac603-572d-4d6f-9d41-3ee9dc4e1030","method":"POST","path":"/internal/fare","status":400,"code":"INVALID_DISTANCE","message":"模拟里程须为1–200000米之间的整数"}
+{"time":"2026-11-26T14:08:12.204Z","service":"pricing","action":"request","request_id":"3c84eed3-e90c-4342-bd83-22c46c25d865","method":"POST","path":"/internal/fare","status":200}
+{"time":"2026-11-26T14:08:12.206Z","service":"pricing","action":"request","request_id":"7f9fc82f-cd7d-44a5-a54a-cb62473301cc","method":"POST","path":"/internal/fare","status":200}
+{"time":"2026-11-26T14:08:12.208Z","service":"pricing","action":"request","request_id":"7106e565-18e1-413b-90d8-7c1eb6ab0d57","method":"POST","path":"/internal/fare","status":200}
+{"time":"2026-11-26T14:08:12.209Z","service":"pricing","action":"request","request_id":"5a7df062-04da-4028-a46f-228b44db3ea9","method":"POST","path":"/internal/fare","status":200}
+{"time":"2026-11-26T14:08:12.211Z","service":"pricing","action":"request","request_id":"3b4a206e-66b8-4a6a-93b5-13f689359c41","method":"POST","path":"/internal/fare","status":200}
+# Subtest: quote validation rejects unknown or identical places and fare inputs are bounded integer meters
+ok 21 - quote validation rejects unknown or identical places and fare inputs are bounded integer meters
+  ---
+  duration_ms: 33.7126
+  type: 'test'
+  ...
+{"service":"pricing","order_id":null,"action":"estimated","estimate_id":"estimate_6a3b5124-ab3b-4ec3-ae4b-474225245e7e"}
+{"time":"2026-11-26T14:08:12.230Z","service":"pricing","action":"request","request_id":"c21a7bbf-12ee-49e3-bde5-805f14437e62","method":"POST","path":"/orders/estimate","status":200}
+{"time":"2026-11-26T14:08:12.242Z","service":"pricing","action":"request","request_id":"fc9a758a-7539-4634-904f-c42466c21491","method":"POST","path":"/internal/fare","status":200}
+# Subtest: expired estimates survive restart and remain usable for an existing ride final fare
+ok 22 - expired estimates survive restart and remain usable for an existing ride final fare
+  ---
+  duration_ms: 32.5401
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.272Z","service":"order","action":"instance_registered","instance_id":"order-DESKTOP-KAIKQB9-51678","address":"127.0.0.1","port":51678}
+{"time":"2026-11-26T14:08:12.272Z","service":"registry","action":"request","request_id":"02310992-34fb-419d-90e3-80a8b9c2709a","method":"PUT","path":"/v1/instances/order-DESKTOP-KAIKQB9-51678","status":200}
+{"time":"2026-11-26T14:08:12.273Z","service":"order","action":"registered","instance_id":"order-DESKTOP-KAIKQB9-51678","address":"127.0.0.1","port":51678,"ttl_ms":10000}
+{"time":"2026-11-26T14:08:12.276Z","service":"driver","action":"instance_registered","instance_id":"driver-DESKTOP-KAIKQB9-51680","address":"127.0.0.1","port":51680}
+{"time":"2026-11-26T14:08:12.276Z","service":"registry","action":"request","request_id":"3b02bd81-ae80-4f16-99fc-f4e55245f1cd","method":"PUT","path":"/v1/instances/driver-DESKTOP-KAIKQB9-51680","status":200}
+{"time":"2026-11-26T14:08:12.276Z","service":"driver","action":"registered","instance_id":"driver-DESKTOP-KAIKQB9-51680","address":"127.0.0.1","port":51680,"ttl_ms":10000}
+{"time":"2026-11-26T14:08:12.299Z","service":"order-query","action":"bootstrap_ready","orders":1,"applied":1}
+{"time":"2026-11-26T14:08:12.409Z","service":"registry","action":"instance_deregistered","instance_id":"driver-DESKTOP-KAIKQB9-51680"}
+{"time":"2026-11-26T14:08:12.409Z","service":"registry","action":"request","request_id":"3d05d0d1-8e90-417d-b162-399c99b55cb1","method":"DELETE","path":"/v1/instances/driver-DESKTOP-KAIKQB9-51680","status":200}
+{"time":"2026-11-26T14:08:12.409Z","service":"driver","action":"deregistered","instance_id":"driver-DESKTOP-KAIKQB9-51680"}
+{"time":"2026-11-26T14:08:12.410Z","service":"registry","action":"instance_deregistered","instance_id":"order-DESKTOP-KAIKQB9-51678"}
+{"time":"2026-11-26T14:08:12.410Z","service":"registry","action":"request","request_id":"6a76671f-18db-488d-9132-0361762f3696","method":"DELETE","path":"/v1/instances/order-DESKTOP-KAIKQB9-51678","status":200}
+{"time":"2026-11-26T14:08:12.410Z","service":"order","action":"deregistered","instance_id":"order-DESKTOP-KAIKQB9-51678"}
+# Subtest: New read replica bootstraps its private projection from Order API, not from Order DB
+ok 23 - New read replica bootstraps its private projection from Order API, not from Order DB
+  ---
+  duration_ms: 170.5789
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.439Z","service":"driver","action":"request_error","request_id":"bff3d50f-a003-4a04-9d04-60f58f0a7e58","method":"GET","path":"/internal/drivers/driver-404","status":404,"code":"DRIVER_NOT_FOUND","message":"司机不存在"}
+# Subtest: Provider contract: driver-service responses satisfy every interaction
+{"time":"2026-11-26T14:08:12.462Z","service":"order-query","action":"event_projected","order_id":"order-contract","event_id":"seed-contract","version":3,"applied":true}
+ok 24 - Provider contract: driver-service responses satisfy every interaction
+  ---
+  duration_ms: 27.59
+  type: 'test'
+  ...
+# Subtest: Consumer contract: order-query calls the agreed driver endpoint and composes its fields
+{"time":"2026-11-26T14:08:12.492Z","service":"order-query","action":"event_projected","order_id":"order-contract","event_id":"seed-contract","version":3,"applied":true}
+ok 25 - Consumer contract: order-query calls the agreed driver endpoint and composes its fields
+  ---
+  duration_ms: 28.3747
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.498Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"DRIVER_NOT_FOUND","attempts":1,"elapsed_ms":2,"circuit":"CLOSED"}
+# Subtest: Consumer contract: a provider 404 becomes an explicit partial response, not a crash
+ok 26 - Consumer contract: a provider 404 becomes an explicit partial response, not a crash
+  ---
+  duration_ms: 31.3632
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:12.508Z","service":"demo","action":"instance_registered","instance_id":"demo-0","address":"127.0.0.1","port":9}
+{"time":"2026-11-26T14:08:12.508Z","service":"registry","action":"request","request_id":"ee485171-3d49-4227-b29a-e38cecb054b8","method":"PUT","path":"/v1/instances/demo-0","status":200}
+{"time":"2026-11-26T14:08:12.510Z","service":"demo","action":"instance_registered","instance_id":"demo-a","address":"127.0.0.1","port":51698}
+{"time":"2026-11-26T14:08:12.510Z","service":"registry","action":"request","request_id":"ce4f1a65-49d2-4812-92e3-916a86d283d8","method":"PUT","path":"/v1/instances/demo-a","status":200}
+{"time":"2026-11-26T14:08:12.512Z","service":"demo","action":"instance_registered","instance_id":"demo-b","address":"127.0.0.1","port":51699}
+{"time":"2026-11-26T14:08:12.512Z","service":"registry","action":"request","request_id":"d876f722-43e8-45ac-884b-8f264a8ceeef","method":"PUT","path":"/v1/instances/demo-b","status":200}
+{"time":"2026-11-26T14:08:12.531Z","service":"registry","action":"instance_deregistered","instance_id":"demo-a"}
+{"time":"2026-11-26T14:08:12.531Z","service":"registry","action":"request","request_id":"fc7c36af-f36c-440d-825c-ed2d55b91e3e","method":"DELETE","path":"/v1/instances/demo-a","status":200}
+# Subtest: Discovery: resolves all instances, load balances, and fails over to a live replica
+ok 27 - Discovery: resolves all instances, load balances, and fails over to a live replica
+  ---
+  duration_ms: 636.2135
+  type: 'test'
+  ...
+# Subtest: Discovery: static fallback keeps component tests independent of a registry
+ok 28 - Discovery: static fallback keeps component tests independent of a registry
+  ---
+  duration_ms: 0.2865
+  type: 'test'
+  ...
+# Subtest: an older projection cannot roll back a successful mutation; equal version clears syncing
+ok 29 - an older projection cannot roll back a successful mutation; equal version clears syncing
+  ---
+  duration_ms: 2.5345
+  type: 'test'
+  ...
+# Subtest: 202 without a projected order keeps the authoritative order and shows syncing
+ok 30 - 202 without a projected order keeps the authoritative order and shows syncing
+  ---
+  duration_ms: 0.9529
+  type: 'test'
+  ...
+# Subtest: a stale current lookup for another order does not replace an active local order
+ok 31 - a stale current lookup for another order does not replace an active local order
+  ---
+  duration_ms: 0.8829
+  type: 'test'
+  ...
+# Subtest: history never overwrites the current order with an older snapshot
+ok 32 - history never overwrites the current order with an older snapshot
+  ---
+  duration_ms: 12.0752
+  type: 'test'
+  ...
+# Subtest: a lost creation response retains the same UUID idempotency key for retry
+ok 33 - a lost creation response retains the same UUID idempotency key for retry
+  ---
+  duration_ms: 4.9135
+  type: 'test'
+  ...
+# Subtest: repeated create clicks while a request is pending issue only one request
+ok 34 - repeated create clicks while a request is pending issue only one request
+  ---
+  duration_ms: 2.6621
+  type: 'test'
+  ...
+# Subtest: HTTP 200 with MATCHING after a failed assignment is not treated as a driver current order
+ok 35 - HTTP 200 with MATCHING after a failed assignment is not treated as a driver current order
+  ---
+  duration_ms: 2.6589
+  type: 'test'
+  ...
+# Subtest: 202 ASSIGNING retains a real pending order without enabling trip progression
+ok 36 - 202 ASSIGNING retains a real pending order without enabling trip progression
+  ---
+  duration_ms: 2.3207
+  type: 'test'
+  ...
+# Subtest: closing new offers while busy preserves the trip and still allows finishing with actual meters
+ok 37 - closing new offers while busy preserves the trip and still allows finishing with actual meters
+  ---
+  duration_ms: 3.5047
+  type: 'test'
+  ...
+# Subtest: an invalid final distance never submits a finish request
+ok 38 - an invalid final distance never submits a finish request
+  ---
+  duration_ms: 1.0619
+  type: 'test'
+  ...
+# Subtest: an old projection 403 cannot clear a pending assignment while driver occupation exists
+ok 39 - an old projection 403 cannot clear a pending assignment while driver occupation exists
+  ---
+  duration_ms: 3.1246
+  type: 'test'
+  ...
+# Subtest: a CLAIMED offer prevents premature clearing even before occupation is visible
+ok 40 - a CLAIMED offer prevents premature clearing even before occupation is visible
+  ---
+  duration_ms: 2.9136
+  type: 'test'
+  ...
+# Subtest: unavailable offer or driver data cannot be mistaken for a failed assignment
+ok 41 - unavailable offer or driver data cannot be mistaken for a failed assignment
+  ---
+  duration_ms: 4.5317
+  type: 'test'
+  ...
+# Subtest: two complete checks of no ownership, occupation or active offer recover a rejected assignment
+ok 42 - two complete checks of no ownership, occupation or active offer recover a rejected assignment
+  ---
+  duration_ms: 2.5941
+  type: 'test'
+  ...
+# Subtest: polling never overlaps even if a scheduled or manual refresh fires during a request
+ok 43 - polling never overlaps even if a scheduled or manual refresh fires during a request
+  ---
+  duration_ms: 1.5099
+  type: 'test'
+  ...
+# Subtest: a response arriving after logout cannot restore the previous actor or order
+ok 44 - a response arriving after logout cannot restore the previous actor or order
+  ---
+  duration_ms: 2.4961
+  type: 'test'
+  ...
+# Subtest: a slower estimate response cannot replace the quote for a newer selection
+ok 45 - a slower estimate response cannot replace the quote for a newer selection
+  ---
+  duration_ms: 2.0327
+  type: 'test'
+  ...
+# Subtest: Gateway HTTP boundary and service routing
+    # Subtest: health is local and public accounts contain no authentication secrets
+    ok 1 - health is local and public accounts contain no authentication secrets
+      ---
+      duration_ms: 17.6473
+      type: 'test'
+      ...
+    # Subtest: login issues shared signed tokens and role checks reject unauthenticated or wrong-role requests
+    ok 2 - login issues shared signed tokens and role checks reject unauthenticated or wrong-role requests
+      ---
+      duration_ms: 10.5183
+      type: 'test'
+      ...
+    # Subtest: public paths reach the correct backend and only allowed headers cross the boundary
+    ok 3 - public paths reach the correct backend and only allowed headers cross the boundary
+      ---
+      duration_ms: 23.0596
+      type: 'test'
+      ...
+    # Subtest: lagging projections and business errors preserve status, query string and JSON body
+    ok 4 - lagging projections and business errors preserve status, query string and JSON body
+      ---
+      duration_ms: 11.7765
+      type: 'test'
+      ...
+    # Subtest: internal routes, unknown assets and path traversal are inaccessible
+    ok 5 - internal routes, unknown assets and path traversal are inaccessible
+      ---
+      duration_ms: 15.0928
+      type: 'test'
+      ...
+    # Subtest: frontend assets are local, version-pinned, correctly typed and protected by a CSP
+    ok 6 - frontend assets are local, version-pinned, correctly typed and protected by a CSP
+      ---
+      duration_ms: 13.6919
+      type: 'test'
+      ...
+    # Subtest: invalid JSON is rejected before being proxied
+    ok 7 - invalid JSON is rejected before being proxied
+      ---
+      duration_ms: 5.4507
+      type: 'test'
+      ...
+    1..7
+ok 46 - Gateway HTTP boundary and service routing
+  ---
+  duration_ms: 105.6658
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:13.308Z","service":"order-query","action":"instance_registered","instance_id":"query-0","address":"127.0.0.1","port":51720}
+{"time":"2026-11-26T14:08:13.308Z","service":"registry","action":"request","request_id":"5e42258f-8722-4b71-a7f3-406499e8a2cb","method":"PUT","path":"/v1/instances/query-0","status":200}
+{"time":"2026-11-26T14:08:13.311Z","service":"order-query","action":"instance_registered","instance_id":"query-1","address":"127.0.0.1","port":51721}
+{"time":"2026-11-26T14:08:13.311Z","service":"registry","action":"request","request_id":"32bf7d01-0906-4973-b29d-cc6a8da6e7b4","method":"PUT","path":"/v1/instances/query-1","status":200}
+{"time":"2026-11-26T14:08:13.330Z","service":"registry","action":"instance_deregistered","instance_id":"query-0"}
+{"time":"2026-11-26T14:08:13.330Z","service":"registry","action":"request","request_id":"17bb890a-ca46-4c77-8a57-825910e37605","method":"DELETE","path":"/v1/instances/query-0","status":200}
+# Subtest: Gateway: routes /api/orders by service discovery and fails over between read replicas
+ok 47 - Gateway: routes /api/orders by service discovery and fails over between read replicas
+  ---
+  duration_ms: 1844.4184
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.173Z","service":"order","action":"request","request_id":"ac5154e3-0e38-4bae-a6d7-2251a5eb09a6","method":"POST","path":"/orders","status":201,"order_id":"ord_45ed3bbb-5cff-45f6-a424-9df40cf39163"}
+{"time":"2026-11-26T14:08:15.175Z","service":"order","action":"request_error","request_id":"edcd2012-584c-4609-9e9b-372e0d5ba766","method":"POST","path":"/orders","status":401,"code":"UNAUTHORIZED","message":"请先选择账号登录"}
+{"time":"2026-11-26T14:08:15.177Z","service":"order","action":"request_error","request_id":"980f0756-8aa8-4563-8714-e56a5adaed46","method":"POST","path":"/orders/ord_45ed3bbb-5cff-45f6-a424-9df40cf39163/cancel","status":403,"code":"NOT_YOUR_ORDER","message":"只能操作自己的订单"}
+{"time":"2026-11-26T14:08:15.179Z","service":"order","action":"request_error","request_id":"8f3eadf6-bdda-4864-81d4-a15d75445f00","method":"POST","path":"/orders/ord_45ed3bbb-5cff-45f6-a424-9df40cf39163/start","status":403,"code":"NOT_YOUR_ORDER","message":"只能处理自己承接的订单"}
+{"time":"2026-11-26T14:08:15.180Z","service":"order","action":"request_error","request_id":"218c8db2-edb7-4d82-805f-320d2a0d3a6a","method":"GET","path":"/internal/orders/ord_45ed3bbb-5cff-45f6-a424-9df40cf39163","status":401,"code":"UNAUTHORIZED","message":"内部调用认证失败"}
+# Subtest: Component: authenticated create, isolated DB persistence, transactional outbox and permissions
+ok 48 - Component: authenticated create, isolated DB persistence, transactional outbox and permissions
+  ---
+  duration_ms: 43.7858
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.212Z","service":"order","action":"request","request_id":"20135255-a4c9-42b2-8559-55d3e6c11fc3","method":"POST","path":"/orders","status":201,"order_id":"ord_6a166f4f-53c8-4132-b59b-d7b60918ecc6"}
+{"time":"2026-11-26T14:08:15.215Z","service":"order","action":"request","request_id":"5ae9704c-3573-41d6-b141-ca30c4546d78","method":"POST","path":"/orders","status":201,"order_id":"ord_6a166f4f-53c8-4132-b59b-d7b60918ecc6"}
+{"time":"2026-11-26T14:08:15.217Z","service":"order","action":"request_error","request_id":"93a00119-7bfa-49ef-a0f6-af66aad6127e","method":"POST","path":"/orders","status":409,"code":"IDEMPOTENCY_CONFLICT","message":"同一请求标识不能用于不同的叫车内容"}
+{"time":"2026-11-26T14:08:15.219Z","service":"order","action":"request_error","request_id":"a56262db-e5ad-47ea-bf6e-6c02f8089473","method":"POST","path":"/orders","status":409,"code":"ACTIVE_ORDER_EXISTS","message":"你已有进行中的叫车或行程"}
+{"time":"2026-11-26T14:08:15.222Z","service":"order","action":"request","request_id":"4eca0e21-bfef-4368-b7f4-cb69fd5ede08","method":"POST","path":"/orders/ord_6a166f4f-53c8-4132-b59b-d7b60918ecc6/cancel","status":200,"order_id":"ord_6a166f4f-53c8-4132-b59b-d7b60918ecc6"}
+{"time":"2026-11-26T14:08:15.226Z","service":"order","action":"request","request_id":"033befa2-c115-4538-bf0d-e6b246d58b6e","method":"POST","path":"/orders","status":201,"order_id":"ord_087115a0-3118-41b7-807f-74bd47f11260"}
+# Subtest: Component: request key replay creates one order and a new key cannot bypass one active order
+ok 49 - Component: request key replay creates one order and a new key cannot bypass one active order
+  ---
+  duration_ms: 42.204
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.255Z","service":"order","action":"request","request_id":"52499c8e-c5e7-40aa-9fe8-9fe379ec7dce","method":"POST","path":"/orders","status":201,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.262Z","service":"order","action":"job_done","order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b","job_id":"reserve:asg_246e6c1a-2759-4db5-924f-e2c6d042887f","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:15.262Z","service":"order","action":"request","request_id":"23bff1ba-c2b4-480c-a015-7e1bf51fdb0f","method":"POST","path":"/internal/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/accept","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.264Z","service":"order","action":"request","request_id":"e676b2aa-23ae-4538-8dbc-331ec6093b22","method":"POST","path":"/internal/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/accept","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.266Z","service":"order","action":"request_error","request_id":"52b1105d-421d-4ae6-8b33-fe9c6c368d3b","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/start","status":409,"code":"INVALID_STATE","message":"请先确认到达上车点，再开始行程"}
+{"time":"2026-11-26T14:08:15.269Z","service":"order","action":"request","request_id":"10a06012-4cb8-4817-9b57-2aa33728e7ba","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/arrive","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.273Z","service":"order","action":"request","request_id":"06af3319-c879-46ae-96f8-c6584535da7c","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/start","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.274Z","service":"order","action":"request","request_id":"a706ed92-5623-472f-871b-3fa4cbaade41","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/start","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.276Z","service":"order","action":"request_error","request_id":"1a53b757-a592-41d0-8300-6d91644ccc2a","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/cancel","status":409,"code":"TRIP_ALREADY_STARTED","message":"行程已开始，不能普通取消"}
+{"time":"2026-11-26T14:08:15.280Z","service":"order","action":"request","request_id":"f0b99467-0265-48d5-9e27-3dfcfc0117a5","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/finish","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.282Z","service":"order","action":"request","request_id":"2b058595-03ea-487d-aef4-bce86a153bc9","method":"POST","path":"/orders/ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b/finish","status":200,"order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b"}
+{"time":"2026-11-26T14:08:15.286Z","service":"order","action":"job_done","order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b","job_id":"resolve:asg_246e6c1a-2759-4db5-924f-e2c6d042887f:ACCEPTED","type":"RESOLVE_OFFER"}
+{"time":"2026-11-26T14:08:15.288Z","service":"order","action":"job_retry","order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b","job_id":"release:asg_246e6c1a-2759-4db5-924f-e2c6d042887f","code":"DRIVER_DOWN","attempt":1}
+{"time":"2026-11-26T14:08:15.323Z","service":"order","action":"job_done","order_id":"ord_fa9bcdac-66db-4bae-8f3d-2cf7494ce69b","job_id":"release:asg_246e6c1a-2759-4db5-924f-e2c6d042887f","type":"RELEASE_DRIVER"}
+# Subtest: Component: lifecycle retries preserve timestamps and fare; failed release resumes after restart
+ok 50 - Component: lifecycle retries preserve timestamps and fare; failed release resumes after restart
+  ---
+  duration_ms: 97.0892
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.357Z","service":"order","action":"request","request_id":"e243534d-53ac-4f71-b6f9-af69d4b9da5f","method":"POST","path":"/orders","status":201,"order_id":"ord_fdf0f7fc-828d-4c85-bac4-864e843887c0"}
+{"time":"2026-11-26T14:08:15.367Z","service":"order","action":"job_retry","order_id":"ord_fdf0f7fc-828d-4c85-bac4-864e843887c0","job_id":"reserve:asg_35d4d6a7-c35d-4d4d-ac32-3630e02d6174","code":"RESPONSE_LOST","attempt":1}
+{"time":"2026-11-26T14:08:15.367Z","service":"order","action":"request","request_id":"7769c001-2f4d-4faf-a355-566b4c3a1591","method":"POST","path":"/internal/orders/ord_fdf0f7fc-828d-4c85-bac4-864e843887c0/accept","status":202,"order_id":"ord_fdf0f7fc-828d-4c85-bac4-864e843887c0"}
+{"time":"2026-11-26T14:08:15.380Z","service":"order","action":"job_done","order_id":"ord_fdf0f7fc-828d-4c85-bac4-864e843887c0","job_id":"reserve:asg_35d4d6a7-c35d-4d4d-ac32-3630e02d6174","type":"RESERVE_DRIVER"}
+# Subtest: Component: lost successful reserve response is retried from persisted progress after restart
+ok 51 - Component: lost successful reserve response is retried from persisted progress after restart
+  ---
+  duration_ms: 65.3959
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.420Z","service":"order","action":"request","request_id":"ba12e230-5aea-4469-8768-b702c2dfa3f0","method":"POST","path":"/orders","status":201,"order_id":"ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22"}
+{"time":"2026-11-26T14:08:15.428Z","service":"order","action":"request","request_id":"d53e23bb-8600-49d7-9de7-84170fea0263","method":"POST","path":"/orders/ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22/cancel","status":200,"order_id":"ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22"}
+{"time":"2026-11-26T14:08:15.430Z","service":"order","action":"job_done","order_id":"ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22","job_id":"reserve:asg_e67bf209-4ab4-4492-b8ef-1499e8eecc90","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:15.431Z","service":"order","action":"request","request_id":"07dbc484-9368-47fb-a3e6-2cebe726b196","method":"POST","path":"/internal/orders/ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22/accept","status":200,"order_id":"ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22"}
+{"time":"2026-11-26T14:08:15.434Z","service":"order","action":"job_done","order_id":"ord_ca05769f-5ed7-4991-870e-7fbd34cf6a22","job_id":"release:asg_e67bf209-4ab4-4492-b8ef-1499e8eecc90","type":"RELEASE_DRIVER"}
+# Subtest: Component: cancelling while reservation is in flight wins over late order confirmation
+ok 52 - Component: cancelling while reservation is in flight wins over late order confirmation
+  ---
+  duration_ms: 54.2771
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.474Z","service":"order","action":"request","request_id":"cd613d37-48ea-480c-9bec-79c4ddbf0ab6","method":"POST","path":"/orders","status":201,"order_id":"ord_6f758185-f876-4698-a05a-cfeaae6b344d"}
+{"time":"2026-11-26T14:08:15.481Z","service":"order","action":"job_done","order_id":"ord_6f758185-f876-4698-a05a-cfeaae6b344d","job_id":"reserve:asg_341564ff-80d6-4d62-a267-677b115be50d","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:15.481Z","service":"order","action":"request","request_id":"adbe4a03-4a4b-4a63-955a-b889cdebb3bc","method":"POST","path":"/internal/orders/ord_6f758185-f876-4698-a05a-cfeaae6b344d/accept","status":200,"order_id":"ord_6f758185-f876-4698-a05a-cfeaae6b344d"}
+{"time":"2026-11-26T14:08:15.485Z","service":"order","action":"job_done","order_id":"ord_6f758185-f876-4698-a05a-cfeaae6b344d","job_id":"release:asg_341564ff-80d6-4d62-a267-677b115be50d","type":"RELEASE_DRIVER"}
+{"time":"2026-11-26T14:08:15.486Z","service":"order","action":"job_done","order_id":"ord_6f758185-f876-4698-a05a-cfeaae6b344d","job_id":"resolve:asg_341564ff-80d6-4d62-a267-677b115be50d:FAILED","type":"RESOLVE_OFFER"}
+# Subtest: Component: a rejected driver reservation restores matching with persisted compensation
+ok 53 - Component: a rejected driver reservation restores matching with persisted compensation
+  ---
+  duration_ms: 50.9478
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.525Z","service":"order","action":"request","request_id":"5a4fbdfb-8a7c-4b92-a4a9-5c74c3098fab","method":"POST","path":"/orders","status":201,"order_id":"ord_e1405f98-715e-4018-83df-afb1208d4705"}
+{"time":"2026-11-26T14:08:15.529Z","service":"order","action":"request_error","request_id":"26ada67b-c67f-43d9-929a-225c5aa2c27d","method":"POST","path":"/orders/ord_e1405f98-715e-4018-83df-afb1208d4705/cancel","status":500,"code":"ERR_SQLITE_ERROR","message":"simulated disk transaction failure"}
+# Subtest: Component: database rollback prevents state without its outbox event
+ok 54 - Component: database rollback prevents state without its outbox event
+  ---
+  duration_ms: 34.4293
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.556Z","service":"order","action":"request","request_id":"8292a680-15e5-4882-b065-4b3d95012b8e","method":"POST","path":"/orders","status":201,"order_id":"ord_318f2a1d-344e-4740-8ef3-7914d181f484"}
+{"time":"2026-11-26T14:08:15.563Z","service":"order","action":"job_done","order_id":"ord_318f2a1d-344e-4740-8ef3-7914d181f484","job_id":"reserve:asg_3b76c1e6-29f4-4c33-b2ca-1d9a5aa8bcd9","type":"RESERVE_DRIVER"}
+{"time":"2026-11-26T14:08:15.563Z","service":"order","action":"request","request_id":"7c1adea7-b8e2-4371-95da-d40996db8783","method":"POST","path":"/internal/orders/ord_318f2a1d-344e-4740-8ef3-7914d181f484/accept","status":200,"order_id":"ord_318f2a1d-344e-4740-8ef3-7914d181f484"}
+{"time":"2026-11-26T14:08:15.566Z","service":"order","action":"request","request_id":"7dbdde85-58d0-4d7a-8cae-32109b71512b","method":"POST","path":"/orders/ord_318f2a1d-344e-4740-8ef3-7914d181f484/arrive","status":200,"order_id":"ord_318f2a1d-344e-4740-8ef3-7914d181f484"}
+{"time":"2026-11-26T14:08:15.570Z","service":"order","action":"request","request_id":"ecc1b5d9-c8f6-4d63-91ad-5d64eba7518e","method":"POST","path":"/orders/ord_318f2a1d-344e-4740-8ef3-7914d181f484/cancel","status":200,"order_id":"ord_318f2a1d-344e-4740-8ef3-7914d181f484"}
+{"time":"2026-11-26T14:08:15.571Z","service":"order","action":"request_error","request_id":"1945abfb-d277-4780-b9e4-bb43786c83ae","method":"POST","path":"/orders/ord_318f2a1d-344e-4740-8ef3-7914d181f484/start","status":409,"code":"INVALID_STATE","message":"请先确认到达上车点，再开始行程"}
+{"time":"2026-11-26T14:08:15.596Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-5","version":5,"applied":true}
+{"time":"2026-11-26T14:08:15.597Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-1","version":1,"applied":false}
+{"time":"2026-11-26T14:08:15.598Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-3","version":3,"applied":false}
+# Subtest: Component: concurrent cancel and start yield exactly one legal outcome
+ok 55 - Component: concurrent cancel and start yield exactly one legal outcome
+  ---
+  duration_ms: 43.4951
+  type: 'test'
+  ...
+# Subtest: Order aggregate preserves the full lifecycle and first effective timestamps
+ok 56 - Order aggregate preserves the full lifecycle and first effective timestamps
+  ---
+  duration_ms: 0.6125
+  type: 'test'
+  ...
+# Subtest: Order enforces owner, assigned driver, and state restrictions
+ok 57 - Order enforces owner, assigned driver, and state restrictions
+  ---
+  duration_ms: 0.3685
+  type: 'test'
+  ...
+# Subtest: Cancellation remains allowed after acceptance and arrival, never after boarding
+ok 58 - Cancellation remains allowed after acceptance and arrival, never after boarding
+  ---
+  duration_ms: 0.295
+  type: 'test'
+  ...
+# Subtest: Cancelled assignment cannot be revived by a late confirmation
+ok 59 - Cancelled assignment cannot be revived by a late confirmation
+  ---
+  duration_ms: 0.1626
+  type: 'test'
+  ...
+# Subtest: Only the current assignment can succeed or be rejected
+ok 60 - Only the current assignment can succeed or be rejected
+  ---
+  duration_ms: 0.1262
+  type: 'test'
+  ...
+# Subtest: Aggregate rejects invalid fare values and does not alter metering
+ok 61 - Aggregate rejects invalid fare values and does not alter metering
+  ---
+  duration_ms: 0.2169
+  type: 'test'
+  ...
+# Subtest: Application retries creation with the same operation key without another pricing call
+ok 62 - Application retries creation with the same operation key without another pricing call
+  ---
+  duration_ms: 0.4808
+  type: 'test'
+  ...
+# Subtest: Application validates quote ownership, expiry, and request identifier before creating
+ok 63 - Application validates quote ownership, expiry, and request identifier before creating
+  ---
+  duration_ms: 0.3071
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.611Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"Error","message":"down"}
+{"time":"2026-11-26T14:08:15.718Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","attempts":2,"elapsed_ms":107,"circuit":"CLOSED"}
+{"time":"2026-11-26T14:08:15.738Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-3","version":3,"applied":true}
+# Subtest: CQRS: full snapshot events tolerate duplicates, gaps, and older versions after newer state
+ok 64 - CQRS: full snapshot events tolerate duplicates, gaps, and older versions after newer state
+  ---
+  duration_ms: 141.7142
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.745Z","service":"order-query","action":"driver_retry","driver_id":"driver-1","attempt":1,"code":"Error","message":"down"}
+{"time":"2026-11-26T14:08:15.858Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","attempts":2,"elapsed_ms":113,"circuit":"CLOSED"}
+# Subtest: CQRS: dependency failure keeps the persisted order and explicitly marks partial response
+ok 65 - CQRS: dependency failure keeps the persisted order and explicitly marks partial response
+  ---
+  duration_ms: 144.3818
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.891Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-1","version":1,"applied":true}
+{"time":"2026-11-26T14:08:15.896Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-5","version":5,"applied":true}
+{"time":"2026-11-26T14:08:15.941Z","service":"order-query","action":"event_projected","order_id":"ord-projection","event_id":"evt-3","version":3,"applied":true}
+# Subtest: CQRS: minimum version exposes sync delay without falsifying newer state
+ok 66 - CQRS: minimum version exposes sync delay without falsifying newer state
+  ---
+  duration_ms: 53.5676
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:15.946Z","service":"order-query","action":"request_error","request_id":"16d97f7f-4485-4256-83ad-fa316415e258","method":"GET","path":"/orders/ord-projection","status":403,"code":"NOT_YOUR_ORDER","message":"只能查询自己的订单"}
+{"time":"2026-11-26T14:08:15.951Z","service":"order-query","action":"request_error","request_id":"b9a2cb2d-4189-4c0d-8a5f-5521b7da3198","method":"GET","path":"/orders/ord-projection","status":403,"code":"NOT_YOUR_ORDER","message":"只能查询自己的订单"}
+{"time":"2026-11-26T14:08:15.967Z","service":"order-query","action":"request_error","request_id":"c75a6e67-baef-4cad-8b56-2d7fd8989031","method":"POST","path":"/internal/events","status":401,"code":"UNAUTHORIZED","message":"内部调用认证失败"}
+# Subtest: CQRS: passenger and driver ownership plus history isolation are enforced at backend
+ok 67 - CQRS: passenger and driver ownership plus history isolation are enforced at backend
+  ---
+  duration_ms: 54.7409
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:16.005Z","service":"order-query","action":"request_error","request_id":"2e74c448-a525-497b-a799-4619f99fa6c9","method":"POST","path":"/internal/events","status":400,"code":"INVALID_EVENT","message":"订单事件格式不正确"}
+# Subtest: CQRS: malformed event rolls back without consuming its event id
+ok 68 - CQRS: malformed event rolls back without consuming its event id
+  ---
+  duration_ms: 38.7596
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:16.024Z","service":"order","action":"instance_registered","instance_id":"order-1","address":"127.0.0.1","port":3101}
+{"time":"2026-11-26T14:08:16.025Z","service":"registry","action":"request","request_id":"df257dab-463e-42f6-a43e-5c54b0241136","method":"PUT","path":"/v1/instances/order-1","status":200}
+{"time":"2026-11-26T14:08:16.031Z","service":"registry","action":"request_error","request_id":"ea2dd624-dcdc-4df7-a251-01a5e0a0bcd3","method":"PUT","path":"/v1/instances/order-1","status":409,"code":"INSTANCE_CONFLICT","message":"实例 ID 已绑定到其他地址或服务"}
+{"time":"2026-11-26T14:08:16.041Z","service":"registry","action":"request_error","request_id":"faee8059-af14-4097-8217-34ef3fe71505","method":"PUT","path":"/v1/instances/bad","status":400,"code":"INVALID_SERVICE","message":"服务名必须是小写字母、数字或连字符，长度 2–41"}
+{"time":"2026-11-26T14:08:16.046Z","service":"registry","action":"instance_deregistered","instance_id":"order-1"}
+{"time":"2026-11-26T14:08:16.046Z","service":"registry","action":"request","request_id":"c85c8268-7e54-4029-a25d-ab8a94efc91f","method":"DELETE","path":"/v1/instances/order-1","status":200}
+# Subtest: Registry: register, refresh, catalog and deregister update discovery results
+ok 69 - Registry: register, refresh, catalog and deregister update discovery results
+  ---
+  duration_ms: 39.2225
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:08:16.059Z","service":"registry","action":"request_error","request_id":"8385d9f5-210b-40be-be9c-4f603f080b64","method":"PUT","path":"/v1/instances/x","status":401,"code":"UNAUTHORIZED","message":"内部调用认证失败"}
+{"time":"2026-11-26T14:08:16.063Z","service":"driver","action":"instance_registered","instance_id":"stale","address":"127.0.0.1","port":3103}
+{"time":"2026-11-26T14:08:16.064Z","service":"registry","action":"request","request_id":"f95e54a9-eaa8-4b78-bd53-b8040ab98d47","method":"PUT","path":"/v1/instances/stale","status":200}
+{"time":"2026-11-26T14:08:17.060Z","service":"registry","action":"expired","instances":["stale"]}
+# Subtest: Registry: registration requires the internal token and leases expire without heartbeats
+ok 70 - Registry: registration requires the internal token and leases expire without heartbeats
+  ---
+  duration_ms: 1331.9014
+  type: 'test'
+  ...
+1..70
+# tests 77
+# suites 0
+# pass 77
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6780.9308

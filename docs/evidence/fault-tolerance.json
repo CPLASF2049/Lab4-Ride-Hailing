@@ -1,0 +1,116 @@
+{
+  "executed_at": "2026-11-26T13:43:34.214Z",
+  "api": "GET /api/orders/:id（order-query 组合查询，依赖 driver-service 资料接口）",
+  "parameters": {
+    "driver_timeout_ms": 250,
+    "max_attempts": 2,
+    "retry_backoff_ms": 100,
+    "circuit_failure_threshold": 3,
+    "circuit_window_ms": 10000,
+    "circuit_open_ms": 1200,
+    "rate_capacity": 3,
+    "rate_refill_per_second": 1
+  },
+  "results": {
+    "normal": {
+      "status": 200,
+      "partial": false,
+      "driver": "王师傅",
+      "elapsed_ms": 37,
+      "driver_calls": 1
+    },
+    "timeout": {
+      "status": 200,
+      "partial": true,
+      "warning": "DRIVER_UNAVAILABLE",
+      "elapsed_ms": 653,
+      "attempts": 2,
+      "timeout_ms": 250,
+      "driver_calls": 3
+    },
+    "breaker": {
+      "failures": [
+        {
+          "status": 200,
+          "warning": "DRIVER_UNAVAILABLE",
+          "circuit": "CLOSED"
+        },
+        {
+          "status": 200,
+          "warning": "CIRCUIT_OPEN",
+          "circuit": "OPEN"
+        },
+        {
+          "status": 200,
+          "warning": "CIRCUIT_OPEN",
+          "circuit": "OPEN"
+        }
+      ],
+      "open_state": "OPEN",
+      "rejected_request": {
+        "status": 200,
+        "warning": "CIRCUIT_OPEN",
+        "elapsed_ms": 2
+      },
+      "driver_calls_before_open": 7,
+      "driver_calls_after_open": 7,
+      "counters": {
+        "success": 1,
+        "failure": 3,
+        "rejected": 2,
+        "opened": 1,
+        "half_open": 0,
+        "closed": 0
+      }
+    },
+    "recovery": {
+      "status": 200,
+      "partial": false,
+      "driver": "王师傅",
+      "circuit": "CLOSED",
+      "open_ms": 1200,
+      "counters": {
+        "success": 2,
+        "failure": 3,
+        "rejected": 2,
+        "opened": 1,
+        "half_open": 1,
+        "closed": 1
+      }
+    },
+    "rate_limit": {
+      "capacity": 3,
+      "refill_per_second": 1,
+      "rapid": [
+        {
+          "status": 200,
+          "retry_after": null
+        },
+        {
+          "status": 200,
+          "retry_after": null
+        },
+        {
+          "status": 200,
+          "retry_after": null
+        },
+        {
+          "status": 429,
+          "retry_after": "1"
+        },
+        {
+          "status": 429,
+          "retry_after": "1"
+        },
+        {
+          "status": 429,
+          "retry_after": "1"
+        }
+      ],
+      "after_wait": {
+        "status": 200,
+        "retry_after": null
+      }
+    }
+  }
+}

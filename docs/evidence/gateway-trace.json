@@ -1,0 +1,370 @@
+{
+  "captured_at": "2026-11-26T14:04:37.219Z",
+  "unified_entry": "http://127.0.0.1:8083",
+  "registry": "http://127.0.0.1:8500",
+  "flow": {
+    "login": {
+      "status": 200,
+      "note": "预设账号登录，网关本地签发令牌"
+    },
+    "driver_online": {
+      "status": 200
+    },
+    "estimate": {
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8083/api/orders/estimate",
+        "headers": {
+          "Authorization": "Bearer <token>"
+        }
+      },
+      "status": 200,
+      "amount_cents": 2618,
+      "distance_m": 8671
+    },
+    "create_order": {
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8083/api/orders",
+        "headers": {
+          "Authorization": "Bearer <token>",
+          "Idempotency-Key": "63140a3c-2c5c-4cb6-b65e-5dc8dfe08275"
+        }
+      },
+      "status": 201,
+      "headers": {
+        "x-instance": "order-a4e3b8b49a23-3101",
+        "x-request-id": "35f01c2d-16ae-45e0-8863-82fd749bad15"
+      },
+      "body": {
+        "order": {
+          "id": "ord_b0f08303-b0f7-4761-93c2-698af1433d97",
+          "rider_id": "rider-1",
+          "status": "MATCHING",
+          "version": 1,
+          "origin": {
+            "id": "fudan",
+            "name": "复旦大学邯郸校区",
+            "lat": 31.2989,
+            "lng": 121.5033
+          },
+          "destination": {
+            "id": "bund",
+            "name": "外滩",
+            "lat": 31.24,
+            "lng": 121.49
+          },
+          "estimate": {
+            "id": "estimate_a148be24-90f5-4428-8b1f-66b6c37328f6",
+            "rider_id": "rider-1",
+            "origin": {
+              "id": "fudan",
+              "name": "复旦大学邯郸校区",
+              "lat": 31.2989,
+              "lng": 121.5033
+            },
+            "destination": {
+              "id": "bund",
+              "name": "外滩",
+              "lat": 31.24,
+              "lng": 121.49
+            },
+            "distance_m": 8671,
+            "duration_s": 1041,
+            "amount_cents": 2618,
+            "created_at": "2026-11-26T14:04:36.558Z",
+            "expires_at": "2026-11-26T14:09:36.558Z",
+            "rule": {
+              "base_cents": 1200,
+              "per_km_cents": 250,
+              "included_m": 3000
+            },
+            "estimated": true,
+            "distance_method": "haversine_x_1_3"
+          },
+          "driver_id": null,
+          "pending_driver_id": null,
+          "offer_id": null,
+          "assignment_id": null,
+          "created_at": "2026-11-26T14:04:36.579Z",
+          "updated_at": "2026-11-26T14:04:36.579Z",
+          "accepted_at": null,
+          "arrived_at": null,
+          "started_at": null,
+          "finished_at": null,
+          "cancelled_at": null,
+          "final_distance_m": null,
+          "final_amount_cents": null,
+          "failure_reason": null
+        }
+      }
+    },
+    "offer": {
+      "id": "offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648",
+      "order_id": "ord_b0f08303-b0f7-4761-93c2-698af1433d97",
+      "driver_id": "driver-1",
+      "expires_at": "2026-11-26T14:04:51.839Z",
+      "order_status": "MATCHING"
+    },
+    "accept": {
+      "status": 200,
+      "order_status": "ACCEPTED",
+      "version": 3
+    },
+    "detail": {
+      "request": {
+        "method": "GET",
+        "url": "http://127.0.0.1:8083/api/orders/ord_b0f08303-b0f7-4761-93c2-698af1433d97?min_version=3",
+        "headers": {
+          "Authorization": "Bearer <token>"
+        }
+      },
+      "status": 200,
+      "headers": {
+        "x-instance": "order-query-7dc41aac4b7d-3102",
+        "x-request-id": "41817f9e-d183-405b-8337-434451f0ab64"
+      },
+      "body": {
+        "order": {
+          "id": "ord_b0f08303-b0f7-4761-93c2-698af1433d97",
+          "rider_id": "rider-1",
+          "status": "ACCEPTED",
+          "version": 3,
+          "origin": {
+            "id": "fudan",
+            "name": "复旦大学邯郸校区",
+            "lat": 31.2989,
+            "lng": 121.5033
+          },
+          "destination": {
+            "id": "bund",
+            "name": "外滩",
+            "lat": 31.24,
+            "lng": 121.49
+          },
+          "estimate": {
+            "id": "estimate_a148be24-90f5-4428-8b1f-66b6c37328f6",
+            "rider_id": "rider-1",
+            "origin": {
+              "id": "fudan",
+              "name": "复旦大学邯郸校区",
+              "lat": 31.2989,
+              "lng": 121.5033
+            },
+            "destination": {
+              "id": "bund",
+              "name": "外滩",
+              "lat": 31.24,
+              "lng": 121.49
+            },
+            "distance_m": 8671,
+            "duration_s": 1041,
+            "amount_cents": 2618,
+            "created_at": "2026-11-26T14:04:36.558Z",
+            "expires_at": "2026-11-26T14:09:36.558Z",
+            "rule": {
+              "base_cents": 1200,
+              "per_km_cents": 250,
+              "included_m": 3000
+            },
+            "estimated": true,
+            "distance_method": "haversine_x_1_3"
+          },
+          "driver_id": "driver-1",
+          "pending_driver_id": null,
+          "offer_id": "offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648",
+          "assignment_id": "asg_ea590223-d5ca-412c-9de8-86b038a4125e",
+          "created_at": "2026-11-26T14:04:36.579Z",
+          "updated_at": "2026-11-26T14:04:36.895Z",
+          "accepted_at": "2026-11-26T14:04:36.895Z",
+          "arrived_at": null,
+          "started_at": null,
+          "finished_at": null,
+          "cancelled_at": null,
+          "final_distance_m": null,
+          "final_amount_cents": null,
+          "failure_reason": null
+        },
+        "driver": {
+          "id": "driver-1",
+          "name": "王师傅",
+          "phone_mask": "138****1001",
+          "vehicle": {
+            "plate": "沪A·L3101",
+            "model": "大众朗逸",
+            "color": "白色"
+          },
+          "online": true,
+          "active_order_id": "ord_b0f08303-b0f7-4761-93c2-698af1433d97",
+          "active_assignment_id": "asg_ea590223-d5ca-412c-9de8-86b038a4125e",
+          "updated_at": "2026-11-26T14:04:36.889Z"
+        },
+        "projection_version": 3,
+        "projected_at": "2026-11-26T14:04:36.949Z",
+        "sync_pending": false,
+        "partial": false,
+        "degraded": false,
+        "warnings": []
+      }
+    },
+    "history": {
+      "status": 200,
+      "order_count": 3,
+      "first_order_id": "ord_b0f08303-b0f7-4761-93c2-698af1433d97"
+    }
+  },
+  "registry_catalog": {
+    "generated_at": "2026-11-26T14:04:37.194Z",
+    "services": {
+      "pricing": [
+        {
+          "id": "pricing-ac5bc66891fd-3105",
+          "service": "pricing",
+          "address": "172.19.0.4",
+          "port": 3105,
+          "last_seen": "2026-11-26T14:04:34.863Z",
+          "age_ms": 2331
+        }
+      ],
+      "order": [
+        {
+          "id": "order-a4e3b8b49a23-3101",
+          "service": "order",
+          "address": "172.19.0.5",
+          "port": 3101,
+          "last_seen": "2026-11-26T14:04:35.050Z",
+          "age_ms": 2144
+        }
+      ],
+      "dispatch": [
+        {
+          "id": "dispatch-851b08003934-3104",
+          "service": "dispatch",
+          "address": "172.19.0.6",
+          "port": 3104,
+          "last_seen": "2026-11-26T14:04:35.228Z",
+          "age_ms": 1966
+        }
+      ],
+      "order-query": [
+        {
+          "id": "order-query-7dc41aac4b7d-3102",
+          "service": "order-query",
+          "address": "172.19.0.7",
+          "port": 3102,
+          "last_seen": "2026-11-26T14:04:35.785Z",
+          "age_ms": 1409
+        }
+      ],
+      "gateway": [
+        {
+          "id": "gateway-99398ed4dba3-8083",
+          "service": "gateway",
+          "address": "172.19.0.8",
+          "port": 8083,
+          "last_seen": "2026-11-26T14:04:36.487Z",
+          "age_ms": 707
+        }
+      ],
+      "driver": [
+        {
+          "id": "driver-0c39d9213059-3103",
+          "service": "driver",
+          "address": "172.19.0.3",
+          "port": 3103,
+          "last_seen": "2026-11-26T14:04:35.549Z",
+          "age_ms": 1645
+        }
+      ]
+    }
+  },
+  "system_health": {
+    "services": {
+      "order": {
+        "healthy": true,
+        "instances": 1,
+        "checks": [
+          {
+            "instance": "order-a4e3b8b49a23-3101",
+            "healthy": true
+          }
+        ]
+      },
+      "order-query": {
+        "healthy": true,
+        "instances": 1,
+        "checks": [
+          {
+            "instance": "order-query-7dc41aac4b7d-3102",
+            "healthy": true,
+            "bootstrap_state": "READY"
+          }
+        ]
+      },
+      "driver": {
+        "healthy": true,
+        "instances": 1,
+        "checks": [
+          {
+            "instance": "driver-0c39d9213059-3103",
+            "healthy": true
+          }
+        ]
+      },
+      "dispatch": {
+        "healthy": true,
+        "instances": 1,
+        "checks": [
+          {
+            "instance": "dispatch-851b08003934-3104",
+            "healthy": true
+          }
+        ]
+      },
+      "pricing": {
+        "healthy": true,
+        "instances": 1,
+        "checks": [
+          {
+            "instance": "pricing-ac5bc66891fd-3105",
+            "healthy": true
+          }
+        ]
+      }
+    },
+    "discovery": {
+      "registry": "http://registry:8500",
+      "cache": {
+        "order": {
+          "instances": 1,
+          "age_ms": 633
+        },
+        "order-query": {
+          "instances": 1,
+          "age_ms": 294
+        },
+        "driver": {
+          "instances": 1,
+          "age_ms": 665
+        },
+        "dispatch": {
+          "instances": 1,
+          "age_ms": 610
+        },
+        "pricing": {
+          "instances": 1,
+          "age_ms": 648
+        }
+      },
+      "registry_lookups": 45,
+      "cache_hits": 51,
+      "fallback_static": 0,
+      "no_instance": 0,
+      "failovers": 0
+    }
+  },
+  "compose_ps": "NAME                           SERVICE       STATUS\nlab4-rideshare-dispatch-1      dispatch      Up About a minute (healthy)\nlab4-rideshare-driver-1        driver        Up 26 seconds (healthy)\nlab4-rideshare-gateway-1       gateway       Up About a minute (healthy)\nlab4-rideshare-order-1         order         Up About a minute (healthy)\nlab4-rideshare-order-query-1   order-query   Up About a minute (healthy)\nlab4-rideshare-pricing-1       pricing       Up About a minute (healthy)\nlab4-rideshare-registry-1      registry      Up About a minute (healthy)\n",
+  "order_flow_log": "order-1  | {\"time\":\"2026-11-26T14:03:26.043Z\",\"service\":\"order\",\"action\":\"registered\",\"instance_id\":\"order-a4e3b8b49a23-3101\",\"address\":\"172.19.0.5\",\"port\":3101,\"ttl_ms\":10000}\norder-1  | {\"time\":\"2026-11-26T14:03:26.044Z\",\"service\":\"order\",\"action\":\"listening\",\"host\":\"0.0.0.0\",\"port\":3101,\"instance_id\":\"order-a4e3b8b49a23-3101\"}\norder-1  | {\"time\":\"2026-11-26T14:04:05.888Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"582ddda2-00cb-4056-aa16-6e652099b2ef\",\"method\":\"POST\",\"path\":\"/orders\",\"status\":201,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-1  | {\"time\":\"2026-11-26T14:04:06.261Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"job_id\":\"reserve:asg_7d0bcf1c-0e63-40f8-bb54-0729862ba22d\",\"type\":\"RESERVE_DRIVER\"}\norder-1  | {\"time\":\"2026-11-26T14:04:06.262Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"4ca207e7-3f64-43df-941a-d001aa343a34\",\"method\":\"POST\",\"path\":\"/internal/orders/ord_8329a355-e7b2-4d33-ac97-46b505864975/accept\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-1  | {\"time\":\"2026-11-26T14:04:06.383Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"job_id\":\"resolve:asg_7d0bcf1c-0e63-40f8-bb54-0729862ba22d:ACCEPTED\",\"type\":\"RESOLVE_OFFER\"}\norder-1  | {\"time\":\"2026-11-26T14:04:22.409Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"6e4b9a77-512d-45bd-a1ba-551fe5290aa0\",\"method\":\"POST\",\"path\":\"/orders/ord_8329a355-e7b2-4d33-ac97-46b505864975/cancel\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-1  | {\"time\":\"2026-11-26T14:04:22.669Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"job_id\":\"release:asg_7d0bcf1c-0e63-40f8-bb54-0729862ba22d\",\"type\":\"RELEASE_DRIVER\"}\norder-1  | {\"time\":\"2026-11-26T14:04:36.585Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"35f01c2d-16ae-45e0-8863-82fd749bad15\",\"method\":\"POST\",\"path\":\"/orders\",\"status\":201,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-1  | {\"time\":\"2026-11-26T14:04:36.899Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"job_id\":\"reserve:asg_ea590223-d5ca-412c-9de8-86b038a4125e\",\"type\":\"RESERVE_DRIVER\"}\norder-1  | {\"time\":\"2026-11-26T14:04:36.900Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"b13f2f28-1ff1-4365-a07c-b37870dc27d3\",\"method\":\"POST\",\"path\":\"/internal/orders/ord_b0f08303-b0f7-4761-93c2-698af1433d97/accept\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-1  | {\"time\":\"2026-11-26T14:04:36.937Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"job_id\":\"resolve:asg_ea590223-d5ca-412c-9de8-86b038a4125e:ACCEPTED\",\"type\":\"RESOLVE_OFFER\"}\norder-1  | {\"time\":\"2026-11-26T14:04:37.218Z\",\"service\":\"order\",\"action\":\"request\",\"request_id\":\"029188b8-bdf1-4251-adc3-e8bc29c968c1\",\"method\":\"POST\",\"path\":\"/orders/ord_b0f08303-b0f7-4761-93c2-698af1433d97/cancel\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-1  | {\"time\":\"2026-11-26T14:04:37.439Z\",\"service\":\"order\",\"action\":\"job_done\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"job_id\":\"release:asg_ea590223-d5ca-412c-9de8-86b038a4125e\",\"type\":\"RELEASE_DRIVER\"}\n",
+  "order_query_log": "order-query-1  | {\"time\":\"2026-11-26T14:03:26.763Z\",\"service\":\"order-query\",\"action\":\"registered\",\"instance_id\":\"order-query-7dc41aac4b7d-3102\",\"address\":\"172.19.0.7\",\"port\":3102,\"ttl_ms\":10000}\norder-query-1  | {\"time\":\"2026-11-26T14:03:26.764Z\",\"service\":\"order-query\",\"action\":\"listening\",\"host\":\"0.0.0.0\",\"port\":3102,\"instance_id\":\"order-query-7dc41aac4b7d-3102\"}\norder-query-1  | {\"time\":\"2026-11-26T14:03:26.790Z\",\"service\":\"order-query\",\"action\":\"bootstrap_ready\",\"orders\":1,\"applied\":1}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.126Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"event_id\":\"evt_b429abc0-5b35-4936-8770-ba63625afa26\",\"version\":1,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.133Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"1b0e78ad-306e-4b96-82ef-cdd63f03bf9b\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.387Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"event_id\":\"evt_9117a67e-49a9-44ba-aa2f-3129c84b9667\",\"version\":2,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.391Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"07007471-b0d5-468d-aba4-45e042f76676\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.392Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"event_id\":\"evt_03f8c462-13a2-49c5-815b-f0a954361222\",\"version\":3,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:06.397Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"9940f8cd-c45c-4a80-b175-929b3835bacf\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.071Z\",\"service\":\"order-query\",\"action\":\"driver_retry\",\"driver_id\":\"driver-1\",\"attempt\":1,\"code\":\"DEPENDENCY_UNAVAILABLE\",\"message\":\"服务 driver 暂时不可用，请稍后重试\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.175Z\",\"service\":\"order-query\",\"action\":\"driver_fallback\",\"driver_id\":\"driver-1\",\"code\":\"NO_INSTANCE\",\"attempts\":2,\"elapsed_ms\":704,\"circuit\":\"CLOSED\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.444Z\",\"service\":\"order-query\",\"action\":\"driver_retry\",\"driver_id\":\"driver-1\",\"attempt\":1,\"code\":\"NO_INSTANCE\",\"message\":\"服务 driver 当前没有可用实例\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.545Z\",\"service\":\"order-query\",\"action\":\"driver_fallback\",\"driver_id\":\"driver-1\",\"code\":\"NO_INSTANCE\",\"attempts\":2,\"elapsed_ms\":101,\"circuit\":\"CLOSED\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.803Z\",\"service\":\"order-query\",\"action\":\"driver_retry\",\"driver_id\":\"driver-1\",\"attempt\":1,\"code\":\"NO_INSTANCE\",\"message\":\"服务 driver 当前没有可用实例\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:08.904Z\",\"service\":\"order-query\",\"action\":\"driver_fallback\",\"driver_id\":\"driver-1\",\"code\":\"NO_INSTANCE\",\"attempts\":2,\"elapsed_ms\":101,\"circuit\":\"CLOSED\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:09.177Z\",\"service\":\"order-query\",\"action\":\"driver_retry\",\"driver_id\":\"driver-1\",\"attempt\":1,\"code\":\"NO_INSTANCE\",\"message\":\"服务 driver 当前没有可用实例\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:09.278Z\",\"service\":\"order-query\",\"action\":\"driver_fallback\",\"driver_id\":\"driver-1\",\"code\":\"NO_INSTANCE\",\"attempts\":2,\"elapsed_ms\":101,\"circuit\":\"CLOSED\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:09.548Z\",\"service\":\"order-query\",\"action\":\"driver_retry\",\"driver_id\":\"driver-1\",\"attempt\":1,\"code\":\"NO_INSTANCE\",\"message\":\"服务 driver 当前没有可用实例\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:09.649Z\",\"service\":\"order-query\",\"action\":\"driver_fallback\",\"driver_id\":\"driver-1\",\"code\":\"NO_INSTANCE\",\"attempts\":2,\"elapsed_ms\":101,\"circuit\":\"OPEN\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:22.676Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"event_id\":\"evt_1ea73223-08fa-49de-ad04-16318e980bd6\",\"version\":4,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:22.682Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"1edf2aad-7e60-48c6-b32f-968052c3abe0\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.681Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"event_id\":\"evt_895a3b2a-fa7d-4618-8713-ef407efa2eb5\",\"version\":1,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.686Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"b856cda4-b355-42da-999a-1580645f4600\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.941Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"event_id\":\"evt_905d9b89-bcb7-4e96-b406-69774943eaa8\",\"version\":2,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.946Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"e8253d08-2942-4c8f-970e-c7b5da9a69bd\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.949Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"event_id\":\"evt_85ecf5fc-25e5-4795-a254-d68cb6db4e73\",\"version\":3,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:36.957Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"8543b857-1b0b-45e5-8e7f-751e487e6f75\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\norder-query-1  | {\"time\":\"2026-11-26T14:04:37.442Z\",\"service\":\"order-query\",\"action\":\"event_projected\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"event_id\":\"evt_1d8ec906-97a0-4f37-ac7f-0e183ed81e81\",\"version\":4,\"applied\":true}\norder-query-1  | {\"time\":\"2026-11-26T14:04:37.445Z\",\"service\":\"order-query\",\"action\":\"request\",\"request_id\":\"f33e4ebb-6cb1-4340-93bf-ccd54e642368\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\n",
+  "dispatch_log": "dispatch-1  | {\"time\":\"2026-11-26T14:03:26.220Z\",\"service\":\"dispatch\",\"action\":\"registered\",\"instance_id\":\"dispatch-851b08003934-3104\",\"address\":\"172.19.0.6\",\"port\":3104,\"ttl_ms\":10000}\ndispatch-1  | {\"time\":\"2026-11-26T14:03:26.221Z\",\"service\":\"dispatch\",\"action\":\"listening\",\"host\":\"0.0.0.0\",\"port\":3104,\"instance_id\":\"dispatch-851b08003934-3104\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"event_applied\",\"version\":1,\"status\":\"MATCHING\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.147Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"c4a6e948-c25b-4979-b076-883975727c71\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"offer_created\",\"offer_id\":\"offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e\",\"driver_id\":\"driver-1\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"offer_claimed\",\"offer_id\":\"offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e\",\"assignment_id\":\"asg_7d0bcf1c-0e63-40f8-bb54-0729862ba22d\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.243Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"8e63ad6c-a370-4c18-8404-b25c85b1a556\",\"method\":\"POST\",\"path\":\"/internal/offers/offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e/claim\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.263Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"4ca207e7-3f64-43df-941a-d001aa343a34\",\"method\":\"POST\",\"path\":\"/offers/offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e/accept\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"offer_resolved\",\"offer_id\":\"offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e\",\"status\":\"ACCEPTED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.378Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"c5a0e9d6-003f-48e1-9a46-497b5003a2df\",\"method\":\"POST\",\"path\":\"/internal/offers/offer_d9a147d0-34b6-4fe9-b84b-04dd926c190e/resolve\",\"status\":200}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"event_applied\",\"version\":2,\"status\":\"ASSIGNING\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.394Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"b94c81b4-3163-4044-af76-7922e76f0675\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"event_applied\",\"version\":3,\"status\":\"ACCEPTED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:06.401Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"8a80b816-55fd-4228-a920-d4c9d94e2838\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\",\"action\":\"event_applied\",\"version\":4,\"status\":\"CANCELLED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:22.686Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"dcebb3c6-995b-4297-b633-7b8487741b0a\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_8329a355-e7b2-4d33-ac97-46b505864975\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"event_applied\",\"version\":1,\"status\":\"MATCHING\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.689Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"b9c0a3ec-9185-41d2-9c31-af49d08a080a\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"offer_created\",\"offer_id\":\"offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648\",\"driver_id\":\"driver-1\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"offer_claimed\",\"offer_id\":\"offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648\",\"assignment_id\":\"asg_ea590223-d5ca-412c-9de8-86b038a4125e\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.884Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"8001b6bf-51f9-4095-b602-eba2fe6523d4\",\"method\":\"POST\",\"path\":\"/internal/offers/offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648/claim\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.902Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"b13f2f28-1ff1-4365-a07c-b37870dc27d3\",\"method\":\"POST\",\"path\":\"/offers/offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648/accept\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"offer_resolved\",\"offer_id\":\"offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648\",\"status\":\"ACCEPTED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.933Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"e35dd1f1-ed11-4329-b88b-9c911f93bde4\",\"method\":\"POST\",\"path\":\"/internal/offers/offer_40d48e9a-d1fe-4a9e-a711-e3410ac2e648/resolve\",\"status\":200}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"event_applied\",\"version\":2,\"status\":\"ASSIGNING\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.949Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"571bbe59-0eaa-4d6e-8240-a0b049cb4d15\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"event_applied\",\"version\":3,\"status\":\"ACCEPTED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:36.957Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"755cf835-b2b0-453a-b4da-63885cf5b349\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\ndispatch-1  | {\"service\":\"dispatch\",\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\",\"action\":\"event_applied\",\"version\":4,\"status\":\"CANCELLED\"}\ndispatch-1  | {\"time\":\"2026-11-26T14:04:37.448Z\",\"service\":\"dispatch\",\"action\":\"request\",\"request_id\":\"7eaa5637-cb5c-490d-9f54-62b84673f8a8\",\"method\":\"POST\",\"path\":\"/internal/events\",\"status\":200,\"order_id\":\"ord_b0f08303-b0f7-4761-93c2-698af1433d97\"}\n"
+}

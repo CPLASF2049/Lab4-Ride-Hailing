@@ -1,0 +1,124 @@
+{
+  "executed_at": "2026-11-26T14:04:22.411Z",
+  "platform": "Docker Compose",
+  "order_id": "ord_8329a355-e7b2-4d33-ac97-46b505864975",
+  "api": "GET /api/orders/:id",
+  "dependency": "driver-service",
+  "phases": {
+    "healthy": {
+      "status": 200,
+      "partial": false,
+      "driver": "王师傅",
+      "elapsed_ms": 10,
+      "circuit": "CLOSED"
+    },
+    "driver_stopped": {
+      "requests": [
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "DRIVER_UNAVAILABLE",
+          "elapsed_ms": 711,
+          "circuit": "CLOSED"
+        },
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "DRIVER_UNAVAILABLE",
+          "elapsed_ms": 107,
+          "circuit": "CLOSED"
+        },
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "DRIVER_UNAVAILABLE",
+          "elapsed_ms": 107,
+          "circuit": "CLOSED"
+        },
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "DRIVER_UNAVAILABLE",
+          "elapsed_ms": 110,
+          "circuit": "CLOSED"
+        },
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "CIRCUIT_OPEN",
+          "elapsed_ms": 106,
+          "circuit": "OPEN"
+        },
+        {
+          "status": 200,
+          "partial": true,
+          "warning": "CIRCUIT_OPEN",
+          "elapsed_ms": 5,
+          "circuit": "OPEN"
+        }
+      ],
+      "circuit_after": {
+        "name": "driver-profile",
+        "state": "OPEN",
+        "failures_in_window": 0,
+        "counters": {
+          "success": 9,
+          "failure": 5,
+          "rejected": 1,
+          "opened": 1,
+          "half_open": 0,
+          "closed": 0
+        },
+        "failure_threshold": 5,
+        "window_ms": 10000,
+        "open_ms": 8000
+      },
+      "rate_limit_after": {
+        "buckets": 1,
+        "rejected": 0,
+        "capacity": 60,
+        "refillPerSecond": 30
+      }
+    },
+    "circuit_open_short_circuit": {
+      "status": 200,
+      "warning": "CIRCUIT_OPEN",
+      "elapsed_ms": 5,
+      "partial": true
+    },
+    "recovered": {
+      "status": 200,
+      "partial": false,
+      "driver": "王师傅",
+      "circuit": {
+        "name": "driver-profile",
+        "state": "CLOSED",
+        "failures_in_window": 0,
+        "counters": {
+          "success": 10,
+          "failure": 5,
+          "rejected": 2,
+          "opened": 1,
+          "half_open": 1,
+          "closed": 1
+        },
+        "failure_threshold": 5,
+        "window_ms": 10000,
+        "open_ms": 8000
+      },
+      "driver_stats": {
+        "calls": 15,
+        "successes": 10,
+        "failures": 5,
+        "retries": 5,
+        "timeouts": 0,
+        "timeout_ms": 600,
+        "max_attempts": 2
+      }
+    }
+  },
+  "commands": {
+    "stop": "docker compose stop driver",
+    "start": "docker compose start driver"
+  }
+}

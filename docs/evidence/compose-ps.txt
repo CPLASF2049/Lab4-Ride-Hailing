@@ -1,0 +1,8 @@
+NAME                           SERVICE       STATUS
+lab4-rideshare-dispatch-1      dispatch      Up About a minute (healthy)
+lab4-rideshare-driver-1        driver        Up 26 seconds (healthy)
+lab4-rideshare-gateway-1       gateway       Up About a minute (healthy)
+lab4-rideshare-order-1         order         Up About a minute (healthy)
+lab4-rideshare-order-query-1   order-query   Up About a minute (healthy)
+lab4-rideshare-pricing-1       pricing       Up About a minute (healthy)
+lab4-rideshare-registry-1      registry      Up About a minute (healthy)

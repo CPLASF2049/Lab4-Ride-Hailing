@@ -1,0 +1,32 @@
+﻿TAP version 13
+{"time":"2026-11-26T14:04:46.084Z","service":"driver","action":"request_error","request_id":"e4b12f8a-ce38-4162-8b92-ecefed07cafe","method":"GET","path":"/internal/drivers/driver-404","status":404,"code":"DRIVER_NOT_FOUND","message":"司机不存在"}
+# Subtest: Provider contract: driver-service responses satisfy every interaction
+{"time":"2026-11-26T14:04:46.115Z","service":"order-query","action":"event_projected","order_id":"order-contract","event_id":"seed-contract","version":3,"applied":true}
+ok 1 - Provider contract: driver-service responses satisfy every interaction
+  ---
+  duration_ms: 73.6201
+  type: 'test'
+  ...
+# Subtest: Consumer contract: order-query calls the agreed driver endpoint and composes its fields
+{"time":"2026-11-26T14:04:46.159Z","service":"order-query","action":"event_projected","order_id":"order-contract","event_id":"seed-contract","version":3,"applied":true}
+ok 2 - Consumer contract: order-query calls the agreed driver endpoint and composes its fields
+  ---
+  duration_ms: 46.6405
+  type: 'test'
+  ...
+{"time":"2026-11-26T14:04:46.168Z","service":"order-query","action":"driver_fallback","driver_id":"driver-1","code":"DRIVER_NOT_FOUND","attempts":1,"elapsed_ms":3,"circuit":"CLOSED"}
+# Subtest: Consumer contract: a provider 404 becomes an explicit partial response, not a crash
+ok 3 - Consumer contract: a provider 404 becomes an explicit partial response, not a crash
+  ---
+  duration_ms: 35.5265
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 217.5738

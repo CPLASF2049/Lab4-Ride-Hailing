@@ -1,0 +1,66 @@
+{
+  "consumer": { "name": "order-query" },
+  "provider": { "name": "driver-service" },
+  "metadata": {
+    "pactSpecification": { "version": "3.0.0" },
+    "note": "order-query 组合查询调用 driver-service 的司机资料接口；本文件为 Pact 格式契约，由仓库内轻量校验器执行，无需外部 Pact Broker。"
+  },
+  "interactions": [
+    {
+      "description": "请求已存在司机的资料",
+      "providerStates": [{ "name": "driver-1 存在且在线" }],
+      "request": {
+        "method": "GET",
+        "path": "/internal/drivers/driver-1",
+        "headers": { "X-Internal-Token": "lab3-local-internal" }
+      },
+      "response": {
+        "status": 200,
+        "headers": { "Content-Type": "application/json; charset=utf-8" },
+        "body": {
+          "driver": {
+            "id": "driver-1",
+            "name": "王师傅",
+            "phone_mask": "138****1001",
+            "vehicle": { "plate": "沪A·L3101", "model": "大众朗逸", "color": "白色" },
+            "online": true,
+            "active_order_id": null,
+            "active_assignment_id": null,
+            "updated_at": "2026-11-15T10:00:00.000Z"
+          }
+        },
+        "matchingRules": {
+          "$.body.driver.id": { "match": "type" },
+          "$.body.driver.name": { "match": "type" },
+          "$.body.driver.phone_mask": { "match": "type" },
+          "$.body.driver.vehicle.plate": { "match": "type" },
+          "$.body.driver.vehicle.model": { "match": "type" },
+          "$.body.driver.vehicle.color": { "match": "type" },
+          "$.body.driver.online": { "match": "type" },
+          "$.body.driver.updated_at": { "match": "type" }
+        }
+      }
+    },
+    {
+      "description": "请求不存在的司机资料",
+      "providerStates": [{ "name": "driver-404 不存在" }],
+      "request": {
+        "method": "GET",
+        "path": "/internal/drivers/driver-404",
+        "headers": { "X-Internal-Token": "lab3-local-internal" }
+      },
+      "response": {
+        "status": 404,
+        "headers": { "Content-Type": "application/json; charset=utf-8" },
+        "body": {
+          "error": { "code": "DRIVER_NOT_FOUND" },
+          "request_id": "00000000-0000-0000-0000-000000000000"
+        },
+        "matchingRules": {
+          "$.body.error.code": { "match": "type" },
+          "$.body.request_id": { "match": "type" }
+        }
+      }
+    }
+  ]
+}

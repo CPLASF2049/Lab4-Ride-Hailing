@@ -1,0 +1,123 @@
+name: lab4-rideshare
+
+x-env: &env
+  HOST: 0.0.0.0
+  REGISTRY_URL: http://registry:8500
+  INTERNAL_TOKEN: ${INTERNAL_TOKEN:-lab3-local-internal}
+  AUTH_SECRET: ${AUTH_SECRET:-lab3-demo-change-before-public-use}
+
+x-service: &service
+  image: lab4-rideshare:local
+  build: .
+  restart: unless-stopped
+  init: true
+  stop_grace_period: 10s
+  healthcheck:
+    test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:'+process.env.PORT+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+    interval: 5s
+    timeout: 3s
+    retries: 12
+    start_period: 5s
+
+services:
+  registry:
+    <<: *service
+    command: ["node", "services/registry/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 8500
+      DB_PATH: ":memory:"
+    ports: ["127.0.0.1:${REGISTRY_PORT:-8500}:8500"]
+
+  order:
+    <<: *service
+    command: ["node", "services/order/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 3101
+      SERVICE_NAME: order
+      DB_PATH: /data/order.sqlite
+    volumes: ["order-data:/data"]
+    depends_on:
+      registry: { condition: service_healthy }
+
+  order-query:
+    <<: *service
+    command: ["node", "services/query/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 3102
+      SERVICE_NAME: order-query
+      DB_PATH: /data/query.sqlite
+      DRIVER_TIMEOUT_MS: ${DRIVER_TIMEOUT_MS:-600}
+      DRIVER_ATTEMPTS: ${DRIVER_ATTEMPTS:-2}
+      CIRCUIT_FAILURE_THRESHOLD: ${CIRCUIT_FAILURE_THRESHOLD:-5}
+      CIRCUIT_OPEN_MS: ${CIRCUIT_OPEN_MS:-8000}
+      QUERY_RATE_CAPACITY: ${QUERY_RATE_CAPACITY:-60}
+      QUERY_RATE_REFILL: ${QUERY_RATE_REFILL:-30}
+    # No shared volume: each read-model replica owns a private projection,
+    # seeded from Order's API at startup and kept current by event fan-out.
+    depends_on:
+      registry: { condition: service_healthy }
+      order: { condition: service_started }
+
+  driver:
+    <<: *service
+    command: ["node", "services/driver/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 3103
+      SERVICE_NAME: driver
+      DB_PATH: /data/driver.sqlite
+    volumes: ["driver-data:/data"]
+    depends_on:
+      registry: { condition: service_healthy }
+
+  dispatch:
+    <<: *service
+    command: ["node", "services/dispatch/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 3104
+      SERVICE_NAME: dispatch
+      DB_PATH: /data/dispatch.sqlite
+      OFFER_TTL_MS: ${OFFER_TTL_MS:-15000}
+      DISPATCH_WAIT_MS: ${DISPATCH_WAIT_MS:-45000}
+      DISPATCH_TICK_MS: ${DISPATCH_TICK_MS:-300}
+    volumes: ["dispatch-data:/data"]
+    depends_on:
+      registry: { condition: service_healthy }
+
+  pricing:
+    <<: *service
+    command: ["node", "services/pricing/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 3105
+      SERVICE_NAME: pricing
+      DB_PATH: /data/pricing.sqlite
+    volumes: ["pricing-data:/data"]
+    depends_on:
+      registry: { condition: service_healthy }
+
+  gateway:
+    <<: *service
+    command: ["node", "services/gateway/main.mjs"]
+    environment:
+      <<: *env
+      PORT: 8083
+      SERVICE_NAME: gateway
+    ports: ["127.0.0.1:${GATEWAY_PORT:-8083}:8083"]
+    depends_on:
+      registry: { condition: service_healthy }
+      order: { condition: service_started }
+      order-query: { condition: service_started }
+      driver: { condition: service_started }
+      dispatch: { condition: service_started }
+      pricing: { condition: service_started }
+
+volumes:
+  order-data:
+  driver-data:
+  dispatch-data:
+  pricing-data:
