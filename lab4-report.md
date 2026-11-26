@@ -481,7 +481,7 @@ npm test
 - 测试材料：`tests/`、`contracts/driver-profile.pact.json`；
 - [README](README.md)：分工、环境、启动、入口、扩缩容、测试命令；
 - 本报告与 [architecture.png](docs/architecture.png)、`docs/evidence/` 下的实际运行证据；
-- 仓库地址：`https://github.com/CPLASF2049/Lab4-Ride-Hailing`。
+- 仓库地址：`https://github.com/CPLASF2049/Lab4-Ride-Hailing`，初始提交 `e119286`（main 分支）；后续文档修订见仓库历史。
 
 ### 7.4 局限
 

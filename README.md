@@ -6,6 +6,7 @@
 - 注册中心目录：**http://localhost:8500/v1/catalog**
 - 实现：Node.js 24（内置 HTTP、SQLite、test），无 npm 运行依赖
 - 部署：Docker Compose，5 个业务服务 + 注册中心 + 网关，全部为独立容器
+- 仓库：https://github.com/CPLASF2049/Lab4-Ride-Hailing（初始提交 e119286）
 
 ![Lab4 架构](docs/architecture.png)
 
