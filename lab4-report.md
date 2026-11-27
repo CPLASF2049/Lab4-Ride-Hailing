@@ -3,7 +3,7 @@
 > 课程：高级软件工程　实验：Lab 4　小组：第 32 组
 > 成员：李金正（26113050066）、李思源（26213050248）
 > 仓库：`lab4-rideshare`　部署：Docker Compose（Docker Desktop 29.8，Linux 容器）
-> 验证日期：2026-11-26
+> 首次 Docker Compose 验证日期：2026-11-26
 
 ## 〇、部署环境与结论
 
@@ -84,7 +84,7 @@ GET /v1/catalog/order-query
 | gateway | order、order-query、driver、dispatch、pricing |
 | order | pricing、driver、dispatch、order-query（事件扇出） |
 | dispatch | driver、order |
-| order-query | driver（组合查询）、order（启动引导） |
+| order-query | driver（组合查询）、order（启动引导与增量补齐） |
 
 ### 1.4 实例变化验证
 
@@ -278,7 +278,7 @@ order-query-1 | {"action":"event_projected","version":3,"applied":true}
 | --- | --- | --- | --- |
 | 超时 | 单次依赖 600ms | `Discovery.request` 的 `AbortSignal.timeout`，由 `guardedDriver` 传入 | 组合查询应在 1 秒级返回；600ms 足以覆盖正常局域网调用，又能快速失败 |
 | 重试 | 最多 2 次尝试（1 次重试），退避 100ms；仅超时、5xx、429 | [common/resilience.mjs](common/resilience.mjs) `withRetry` | 幂等 GET 可安全重试；业务 4xx 不重试，避免放大错误 |
-| 熔断 | 10 秒窗口 5 次失败，开路 8 秒，半开 1 次探测 | `CircuitBreaker`，每个 order-query 实例独立 | 防止持续故障拖慢所有请求；8 秒后自动探测，无需人工 |
+| 熔断 | 10 秒窗口内连续 5 次失败，开路 8 秒，半开 1 次探测 | `CircuitBreaker`，每个 order-query 实例独立 | 开路后暂停调用。等待结束后只发出一次试探调用 |
 | 降级 | `partial=true`、`warnings`、`degradation` | `guardedDriver` 捕获后返回空司机资料 | 订单本身仍可展示和操作，避免整个详情 500 |
 | 限流 | 每用户 60 容量、30 rps；网关每 IP 80/40 | `RateLimiter` + 网关 `TokenBucket` | 保护查询服务；按用户/来源限制，超限返回 429 和 `Retry-After` |
 
@@ -379,15 +379,14 @@ curl http://localhost:8500/v1/catalog/order-query
 
 12 次经网关的订单查询在两个副本上各 6 次，全部 200 且包含司机资料；缩容后剩余实例继续正常返回。证据：[scaling.json](docs/evidence/scaling.json)。
 
-### 5.3 为什么多副本仍能读到一致数据
+### 5.3 副本如何追上订单状态
 
-1. **私有读模型**：每个副本独立 SQLite，避免共享库锁竞争；
-2. **启动引导**：新副本启动后调用 Order 的 `GET /internal/orders/snapshots` 拉取全量快照，按版本条件写入；不直接读 Order 数据库；
-3. **事件扇出**：Order Outbox 对 `order-query` 的每个注册实例分别投递；只有全部成功才标记该事件已投递，失败重试；
-4. **幂等与版本**：每个副本用 `inbox(event_id)` 去重，仅接受更大 `version`，因此重复投递、乱序事件不会破坏读模型；
-5. **网关轮询**：`X-Instance` 证明流量确实分布到两个副本。
+1. 每个副本拥有自己的 SQLite 读模型。启动时从 Order 的 `GET /internal/orders/snapshots` 获取全量快照和同一事务读取的状态日志游标。
+2. 在初始快照提交前，副本的业务查询返回 `503 QUERY_BOOTSTRAPPING`。网关遇到该副本的 503 会尝试其他副本，健康接口显示 `bootstrap_state`。
+3. Order Outbox 向发现到的查询副本分别推送订单事件。副本用 `inbox(event_id)` 去重，事件和快照共用版本检查，只应用更新的订单版本。
+4. 注册目录缓存可能晚于扩容变化，导致后加入的副本错过事件。副本每 2 秒向 Order 补取游标之后的订单，每页最多扫描 200 条状态日志，仅在写入成功后推进游标。
 
-扩缩容期间可能短暂出现新副本尚未引导完成的情况；网关健康检查显示 `bootstrap_state`，新副本完成引导后才进入稳定服务。
+11 月 27 日的回归让新副本暂停在首次快照响应，在此期间新建一笔订单并取消另一笔。网关继续从已就绪副本返回结果，新副本在启动后通过增量同步补齐两笔变更。测试使用真实本地 HTTP 和独立 SQLite 读模型。见 [扩容回归测试](tests/bootstrap.test.mjs)。
 
 ### 5.4 边界
 
@@ -457,9 +456,9 @@ npm run test:contracts
 | 架构 | DDD 四层、CQRS、Saga/Outbox | 保留；订单查询增加容错与限流 |
 | 服务寻址 | 固定 URL | 注册中心 + 服务发现 + 轮询 |
 | 网关 | 静态地址代理 | 发现式路由、限流、超时、GET 故障转移、实例标记 |
-| 读模型 | 单实例 SQLite | 可水平扩展、私有库、启动引导、事件扇出 |
+| 读模型 | 单实例 SQLite | 私有读模型、启动就绪检查、事件扇出与增量补齐 |
 | 部署 | Node 本地 + 可选 Compose | 以 Docker Compose 为正式验证环境 |
-| 测试 | 68 项 | 77 项（新增注册、发现、网关、引导、契约等） |
+| 测试 | 最终 77 项 | 首次验证 77 项，本地复核 89 项 |
 
 ### 7.2 测试
 
@@ -467,7 +466,7 @@ npm run test:contracts
 npm test
 ```
 
-结果：**77 项通过、0 失败**（[tests.tap](docs/evidence/tests.tap)）。覆盖：
+11 月 26 日首次验证有 **77 项通过、0 失败**。见 [首次 TAP 记录](docs/evidence/tests.tap)。
 
 - Order 领域单元测试、Order/Query 组件测试、前端状态测试；
 - 注册中心注册/续约/过期/注销、发现轮询与故障转移、网关按目录路由；
@@ -490,3 +489,33 @@ npm test
 - 限流/熔断按实例计数，扩缩容后阈值总体变化；
 - 未接入 TLS、真实身份提供方、Prometheus 指标、分布式追踪和自动告警；
 - SQLite 适合课程规模，不代表生产吞吐。
+
+### 7.5 2026-11-27 本地复核
+
+本次在 Windows、Node.js v24.22.3 上验证。合入 Lab 3 的公共 HTTP 解析、订单事件校验和组合查询降级修复后，增加了副本启动与增量同步回归，共 **89 项自动化测试通过**。其中 9 项来自 Lab 3，新增 3 项覆盖司机占用字段缺失、扩容期间写入和快照分页。
+
+| 验证 | 实际结果 |
+| --- | --- |
+| `node scripts/acceptance.mjs` | 11 组真实 HTTP 服务验收通过，覆盖订单全流程、资源竞争与失败恢复 |
+| `node scripts/fault-demo.mjs` | 慢依赖触发重试与降级，持续失败触发熔断，半开探测成功后恢复，超限返回 429 |
+| `node scripts/dev.mjs` 与 `node scripts/smoke.mjs` | 本机启动 7 个独立进程，通过注册中心完成叫车、接单及组合查询 |
+| 扩容回归 | 暂停新副本引导，制造目录缓存漏投，验证网关切换、新副本追上创建与取消、注销后剩余副本继续服务 |
+
+第 5 节的 Docker Compose 记录来自 11 月 26 日。第 7.6 节记录了本地回归后追加的容器复验。
+
+### 7.6 扩缩容与容错自动验收
+
+扩缩容脚本在第二个容器启动前并发新建一笔订单并取消另一笔。扩容后按 `X-Instance` 确认两个副本都读到了变更，再写入一笔订单并确认两个副本都能查询。缩容后检查剩余实例仍能读取三笔订单。
+
+并发容错测试验证半开阶段只允许一个查询请求向 Driver 探测，当前探测失败时直接重新开路。开路前发出、在半开阶段才返回的请求不会提前关闭熔断器。相关用例见 [查询组件测试](tests/query.component.test.mjs)。
+
+11 月 27 日在 GitHub Actions 的 Ubuntu 24.04 环境复验，使用 Docker Engine 28.0.4 和 Compose 2.38.2。7 个容器正常启动，91 项自动化测试和 11 组真实 HTTP 服务验收通过。
+
+| 验收阶段 | 实测结果 |
+| --- | --- |
+| 扩容准备 | 1 个查询容器运行，第二个已创建。此时新建与取消均成功，原副本返回对应订单 |
+| 扩容完成 | 两个副本读到匹配中的新订单和已取消订单，随后写入的第三笔订单也能从两边读取 |
+| 网关分流 | 12 次详情查询均返回 200，两个副本各处理 6 次 |
+| 缩容完成 | 查询副本数量回到 1，剩余实例返回三笔订单 |
+
+此次产物包含测试输出、服务验收、缩放数据和容器日志。见 [扩缩容实测数据](docs/evidence/scaling-with-writes.json)和 [GitHub Actions 成功记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/runs/45955444003)。

@@ -1,6 +1,7 @@
 .git
 .env
 .runtime
+lab4-ci-evidence
 data
 node_modules
 **/__pycache__

@@ -12,11 +12,11 @@
 
 ## 1. 小组与分工安排
 
-沿用 Lab 2/3 第 32 组。下表为本实验分工安排，提交前由组员核对；不声明已发生的个人提交记录。
+沿用 Lab 2/3 第 32 组。下表列出本实验的分工和复核范围。
 
 | 成员 | 学号 | 负责范围 |
 | --- | --- | --- |
-| 李金正 | 26113050066 | 注册中心与网关、服务发现改造、订单请求链路、Compose 部署与扩缩容验证 |
+| 李金正 | 26113050066 | 注册中心与网关、服务发现与订单链路、查询副本就绪与读模型补齐、熔断并发回归、Compose 扩缩容读写验收、GitHub Actions 和 README |
 | 李思源 | 26213050248 | 订单查询容错、契约测试、测试整理、报告与演示材料 |
 | 共同核对 | — | 治理参数、验收记录、代码与报告一致性 |
 
@@ -31,8 +31,9 @@
 
 ## 3. 一键启动
 
+在仓库根目录执行以下命令。
+
 ```powershell
-cd lab4-rideshare
 docker compose config --quiet      # 可选：校验配置
 docker compose up -d --build       # 构建镜像并启动 7 个容器
 docker compose ps                  # 7 个服务均为 healthy
@@ -69,7 +70,7 @@ docker compose down --volumes                       # 完全重置（含数据�
 | `dispatch` | `dispatch` | 3104 | — | 派单任务与顺序 offer |
 | `pricing` | `pricing` | 3105 | — | 预设地点、报价与计费 |
 
-`order-query` **不挂共享卷**：每个副本拥有私有读模型，启动时从 Order API 引导，随后接收所有订单事件。这样扩缩容不会出现多副本共享同一个 SQLite 文件。
+`order-query` 的每个副本使用独立 SQLite。副本从 Order API 初始化读模型，持续接收订单事件，并定期补取漏掉的更新。
 
 ## 5. 注册发现与统一网关
 
@@ -131,14 +132,32 @@ docker compose up -d --scale order-query=2 --no-recreate
 docker compose ps                       # order-query-1 / order-query-2
 curl http://localhost:8500/v1/catalog/order-query
 
-# 自动验证：扩容、流量分布、缩容并保存证据
-node scripts/scale-demo.mjs
-
 # 缩容回 1 个
 docker compose up -d --scale order-query=1 --no-recreate
 ```
 
-新副本注册后自动从 Order API 引导读模型；Order 的 Outbox 会把每个订单事件投递到**所有** order-query 实例，副本以 inbox 去重和版本守卫保持幂等。实际结果见 [docs/evidence/scaling.json](docs/evidence/scaling.json)：1 → 2 → 1，12 次查询在两个副本上各 6 次。
+新副本加载初始快照前返回 `503 QUERY_BOOTSTRAPPING`，网关会切换到其他可用副本。Order 的 Outbox 向发现到的所有查询实例投递事件。查询副本每 2 秒按游标补取更新，弥补注册目录缓存期间可能遗漏的事件。快照和事件都只用较新的订单版本更新读模型。
+
+11 月 26 日的 Docker Compose 验收完成了 1 → 2 → 1 扩缩容，两个副本各处理 6 次查询。11 月 27 日的本地回归覆盖了扩容期间继续查询、新建订单与取消订单。详见 [Compose 扩缩容记录](docs/evidence/scaling.json)和[本地复核报告](lab4-report.md#75-2026-11-27-本地复核)。
+
+### 自动验收
+
+在独立的 Compose 项目中从 1 个查询副本启动，使用空闲的演示乘客和司机账号。
+
+```powershell
+$env:COMPOSE_PROJECT_NAME = 'lab4-scale-check'
+$env:GATEWAY_PORT = '18083'
+$env:REGISTRY_PORT = '18500'
+docker compose up -d --build --wait
+node scripts/scale-demo.mjs
+docker compose down --volumes
+```
+
+脚本先准备第二个查询容器，在它启动前并发新建一单、取消另一单。两个副本就绪后，脚本确认它们都能读到这两笔变更和扩容后新写入的订单，并记录 12 次查询的实例分布。缩回 1 个副本后，再校验剩余实例能查到三笔订单。结果默认保存到 `.runtime/scale-demo/scaling.json`。使用 `LAB4_EVIDENCE_DIR` 可指定输出目录。
+
+每次推送后，GitHub Actions 在 Ubuntu 的临时 Compose 项目执行同样的检查。运行详情中的 `lab4-verification` 包含扩缩容结果、服务验收和容器日志。[自动验收记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/workflows/lab4.yml)
+
+11 月 27 日的容器复验通过。扩容后 12 次查询由两个副本各处理 6 次，两边都查到扩容期间的新建和取消，以及扩容完成后的新单。缩回 1 个副本后，三笔订单仍可查询。[扩缩容实测数据](docs/evidence/scaling-with-writes.json) · [GitHub Actions 成功记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/runs/45955444003)
 
 ## 7. 订单查询容错
 
@@ -148,7 +167,7 @@ docker compose up -d --scale order-query=1 --no-recreate
 | --- | --- | --- |
 | 超时 | `DRIVER_TIMEOUT_MS=600` | 单次依赖调用 600ms 超时，超时进入重试 |
 | 重试 | `DRIVER_ATTEMPTS=2`，退避 100ms | 仅超时、5xx、429 重试；4xx 不重试 |
-| 熔断 | 10 秒窗口内 5 次失败，开路 8 秒，半开 1 次探测 | 开路期间直接降级，不调用下游 |
+| 熔断 | 10 秒窗口内连续 5 次失败，开路 8 秒 | 半开时最多一个请求探测，单次调用失败即重新开路。其他请求继续降级 |
 | 降级 | `partial=true`、`warnings`、`degradation` | 保留订单读模型，司机资料为空，订单仍可操作 |
 | 限流 | 查询每用户 60 容量 / 30 rps；网关每 IP 80 / 40 rps | 超限返回 `429 RATE_LIMITED` 与 `Retry-After: 1` |
 
@@ -189,7 +208,7 @@ npm run test:contracts
 ## 9. 测试与证据
 
 ```powershell
-npm test             # 全部 77 项
+npm test             # 全部 91 项
 npm run test:unit    # 领域、前端状态
 npm run test:component
 npm run test:contracts
@@ -198,15 +217,16 @@ npm run test:fault   # 容错场景
 
 | 证据 | 内容 |
 | --- | --- |
-| [docs/evidence/tests.tap](docs/evidence/tests.tap) | 77 项测试、77 通过、0 失败 |
+| [docs/evidence/tests.tap](docs/evidence/tests.tap) | 11 月 26 日首次验证，77 项通过 |
 | [docs/evidence/contract-tests.tap](docs/evidence/contract-tests.tap) | 契约测试 3 项通过 |
 | [docs/evidence/gateway-trace.json](docs/evidence/gateway-trace.json) | 统一入口、实例 ID、订单 201/接单 200/详情 200、注册目录、容器状态与关联日志 |
 | [docs/evidence/scaling.json](docs/evidence/scaling.json) | order-query 1→2→1、两副本各 6 次请求 |
+| [docs/evidence/scaling-with-writes.json](docs/evidence/scaling-with-writes.json) | Ubuntu 容器复验，覆盖扩容期间新建和取消、双副本读写与缩容后查询 |
 | [docs/evidence/fault-tolerance.json](docs/evidence/fault-tolerance.json) | 超时、重试、熔断、恢复、限流 |
 | [docs/evidence/fault-tolerance-docker.json](docs/evidence/fault-tolerance-docker.json) | 停止/恢复 driver 容器的实际表现 |
 | [docs/evidence/compose-ps.txt](docs/evidence/compose-ps.txt) | 7 个容器健康状态 |
 
-完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
+11 月 27 日在 Windows 和 Node.js v24.22.3 上复核，91 项自动化测试和 11 组真实 HTTP 服务验收通过。完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
 
 ## 10. 目录结构
 
@@ -233,11 +253,11 @@ lab4-rideshare/
 
 ## 11. 与 Lab 3 的关系
 
-Lab 3 的 DDD 四层、CQRS、Saga/Outbox、77 项测试全部保留并通过。Lab 4 的主要改动：
+Lab 4 保留 Lab 3 的 DDD 四层、CQRS、Saga/Outbox 和业务测试，并补回 Lab 3 合入的 9 项回归测试。
 
 - 新增注册中心，所有服务启动即注册，调用方按注册名解析，不再依赖固定 URL。
 - 网关由静态地址改为服务发现 + 轮询 + GET 故障转移，并增加入口限流与 `X-Instance`。
-- `order-query` 改为可水平扩展：私有读模型、启动引导、事件扇出、inbox 去重。
+- `order-query` 通过私有读模型、启动引导、事件扇出和快照增量补齐支持水平扩展。
 - 新增容错模块、契约测试、Docker Compose 与治理证据。
 
 ## 12. 已知边界

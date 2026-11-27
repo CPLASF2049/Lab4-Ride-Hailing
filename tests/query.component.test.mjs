@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
+import { CircuitBreaker } from '../common/resilience.mjs';
 import { createQuery } from '../services/query/service.mjs';
 import { Order } from '../services/order/domain/order.mjs';
 import { listen, request, sampleEstimate, testDirectory } from './helpers.mjs';
@@ -73,4 +75,125 @@ test('CQRS: malformed event rolls back without consuming its event id', async t 
   const res = await request(f.base, '/internal/events', { method: 'POST', body: malformed, internal: true });
   assert.equal(res.status, 400); assert.equal(f.service.db.prepare('SELECT COUNT(*) AS n FROM inbox').get().n, 0);
   assert.equal(f.service.db.prepare('SELECT COUNT(*) AS n FROM order_views').get().n, 0);
+});
+
+test('CQRS: malformed or mismatched driver profiles explicitly degrade the response', async t => {
+  let driver = null;
+  const breaker = new CircuitBreaker({ failureThreshold: 20 });
+  const service = createQuery({ dbPath: ':memory:', breaker, driverAttempts: 1, getDriver: async () => ({ driver }) });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  for (driver of [null, undefined, { id: 'driver-2' }, []]) {
+    const detail = await request(base, '/orders/ord-projection');
+    assert.equal(detail.status, 200);
+    assert.equal(detail.body.order.status, 'ACCEPTED');
+    assert.equal(detail.body.driver, null);
+    assert.equal(detail.body.partial, true);
+    assert.equal(detail.body.warnings[0].code, 'DRIVER_UNAVAILABLE');
+    const current = await request(base, '/orders/current', { actor: 'driver-1' });
+    assert.equal(current.status, 200);
+    assert.equal(current.body.order.id, 'ord-projection');
+    assert.equal(current.body.partial, true);
+  }
+});
+
+test('CQRS: a missing occupancy field is not treated as an available driver with no order', async t => {
+  const service = createQuery({ dbPath: ':memory:', driverAttempts: 1, getDriver: async id => ({ driver: { id } }) });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const current = await request(base, '/orders/current', { actor: 'driver-1' });
+  assert.equal(current.status, 200);
+  assert.equal(current.body.order.id, 'ord-projection');
+  assert.equal(current.body.driver, null);
+  assert.equal(current.body.partial, true);
+  assert.equal(current.body.warnings[0].code, 'DRIVER_UNAVAILABLE');
+});
+
+test('CQRS: driver fallback orders trips by creation time rather than unrelated aggregate versions', async t => {
+  const service = createQuery({ dbPath: ':memory:', driverAttempts: 1, getDriver: async () => { throw new Error('down'); } });
+  t.after(() => service.close());
+  const base = await listen(service);
+  const accepted = snapshots().accepted;
+  service.project(event({ ...accepted, id: 'ord-old', version: 99, created_at: '2026-11-14T00:00:00.000Z' }, 'evt-old'));
+  service.project(event({ ...accepted, id: 'ord-new', version: 3, created_at: '2026-11-15T00:00:00.000Z' }, 'evt-new'));
+  const result = await request(base, '/orders/current', { actor: 'driver-1' });
+  assert.equal(result.status, 200);
+  assert.equal(result.body.order.id, 'ord-new');
+  assert.equal(result.body.partial, true);
+});
+
+test('CQRS: only the current half-open probe can complete recovery under concurrent reads', { timeout: 6000 }, async t => {
+  const breaker = new CircuitBreaker({ failureThreshold: 1, openMs: 80 });
+  const oldStarted = Promise.withResolvers();
+  const finishOld = Promise.withResolvers();
+  const probeStarted = Promise.withResolvers();
+  const finishProbe = Promise.withResolvers();
+  let calls = 0;
+  const service = createQuery({
+    dbPath: ':memory:', breaker, driverAttempts: 1,
+    getDriver: async id => {
+      calls++;
+      if (calls === 1) {
+        oldStarted.resolve();
+        await finishOld.promise;
+      } else if (calls === 2) {
+        throw new Error('driver unavailable');
+      } else if (calls === 3) {
+        probeStarted.resolve();
+        await finishProbe.promise;
+      }
+      return { driver: { id, name: '王师傅' } };
+    },
+  });
+  t.after(async () => {
+    finishOld.resolve();
+    finishProbe.resolve();
+    await service.close();
+  });
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const detail = () => request(base, '/orders/ord-projection');
+  const lateResponse = detail();
+  await oldStarted.promise;
+  assert.equal((await detail()).body.warnings[0].code, 'CIRCUIT_OPEN');
+  await delay(90);
+
+  const probe = detail();
+  await probeStarted.promise;
+  const concurrent = await Promise.all([detail(), detail(), detail()]);
+  assert.equal(calls, 3);
+  for (const read of concurrent) {
+    assert.equal(read.body.degradation.circuit, 'HALF_OPEN');
+    assert.equal(read.body.degradation.attempts, 0);
+  }
+
+  finishOld.resolve();
+  assert.equal((await lateResponse).body.partial, false);
+  assert.equal(breaker.state, 'HALF_OPEN');
+  finishProbe.resolve();
+  assert.equal((await probe).body.partial, false);
+  assert.equal(breaker.state, 'CLOSED');
+});
+
+test('CQRS: a failed half-open probe reopens the circuit after one dependency attempt', async t => {
+  const breaker = new CircuitBreaker({ failureThreshold: 1, openMs: 80 });
+  let calls = 0;
+  const service = createQuery({
+    dbPath: ':memory:', breaker, driverAttempts: 2,
+    getDriver: async () => {
+      calls++;
+      throw new Error('driver unavailable');
+    },
+  });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const detail = () => request(base, '/orders/ord-projection');
+  assert.equal((await detail()).body.degradation.attempts, 2);
+  await delay(90);
+  assert.equal((await detail()).body.degradation.attempts, 1);
+  assert.equal(calls, 3);
+  assert.equal(breaker.state, 'OPEN');
 });

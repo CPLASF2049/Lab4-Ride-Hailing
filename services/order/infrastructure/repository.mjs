@@ -80,7 +80,22 @@ export class OrderRepository {
     this.db.prepare('INSERT OR IGNORE INTO jobs(id,type,order_id,payload,created_at) VALUES(?,?,?,?,?)').run(job.id, job.type, job.order_id, JSON.stringify(job.payload), now());
   }
   health() { return this.db.prepare('SELECT 1 AS ok').get().ok === 1; }
-  all() { return this.db.prepare('SELECT snapshot FROM orders ORDER BY json_extract(snapshot,\'$.created_at\')').all().map(row => JSON.parse(row.snapshot)); }
+  snapshots(after) {
+    if (after === undefined) {
+      // The initial state and cursor must describe the same committed database state.
+      return transaction(this.db, () => {
+        const { cursor } = this.db.prepare('SELECT COALESCE(MAX(id), 0) AS cursor FROM state_log').get();
+        const orders = this.db.prepare(`SELECT snapshot FROM orders ORDER BY json_extract(snapshot,'$.created_at')`)
+          .all().map(row => JSON.parse(row.snapshot));
+        return { cursor, orders };
+      });
+    }
+    const changes = this.db.prepare(`SELECT state_log.id, orders.snapshot FROM state_log
+      JOIN orders ON orders.id = state_log.order_id WHERE state_log.id > ?
+      ORDER BY state_log.id LIMIT 200`).all(after);
+    const snapshots = new Set(changes.map(row => row.snapshot));
+    return { cursor: changes.at(-1)?.id ?? after, orders: [...snapshots].map(value => JSON.parse(value)) };
+  }
   diagnostics() {
     return {
       pending_jobs: this.db.prepare("SELECT id,type,order_id,attempts,last_error FROM jobs WHERE status='PENDING'").all(),

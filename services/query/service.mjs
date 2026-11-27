@@ -3,9 +3,9 @@ import { config } from '../../common/config.mjs';
 import { createServer, HttpError, response, log } from '../../common/http.mjs';
 import { Discovery } from '../../common/discovery.mjs';
 import { CircuitBreaker, RateLimiter, withRetry } from '../../common/resilience.mjs';
+import { isOrderSnapshot, validateOrderEvent } from '../../common/order-event.mjs';
 
 const activeSql = "('MATCHING','ASSIGNING','ACCEPTED','ARRIVED','IN_PROGRESS')";
-const states = ['MATCHING','ASSIGNING','ACCEPTED','ARRIVED','IN_PROGRESS','COMPLETED','CANCELLED','FAILED'];
 
 export function createQuery(options = {}) {
   const cfg = { ...config('query', 3102), ...options };
@@ -38,7 +38,12 @@ export function createQuery(options = {}) {
     refillPerSecond: Number(process.env.QUERY_RATE_REFILL || 30),
   });
   const driverStats = { calls: 0, successes: 0, failures: 0, retries: 0, timeouts: 0 };
-  const bootstrap = { state: 'NOT_STARTED', orders: 0, attempts: 0, last_error: null, completed_at: null };
+  const bootstrap = {
+    state: 'NOT_STARTED', orders: 0, attempts: 0, cursor: null,
+    last_error: null, completed_at: null, last_synced_at: null,
+  };
+  let requireBootstrap = options.requireBootstrap ?? false;
+  const readyToRead = () => !requireBootstrap || bootstrap.state === 'READY';
 
   const rawDriver = options.getDriver || (id => discovery.request('driver', `/internal/drivers/${encodeURIComponent(id)}`, { timeoutMs: driverTimeoutMs, retry: false }).then(result => result.data));
 
@@ -46,19 +51,29 @@ export function createQuery(options = {}) {
    * One guarded dependency call: circuit gate -> timeout -> bounded retry ->
    * success/failure accounting. Returns a fallback value instead of throwing.
    */
-  async function guardedDriver(id) {
+  async function guardedDriver(id, { needsOccupancy = false } = {}) {
     const started = Date.now();
-    if (!breaker.allow()) {
-      return { driver: null, warning: { code: 'CIRCUIT_OPEN', message: '司机资料服务正在熔断保护中，订单状态仍可查看和操作。' }, meta: { elapsed_ms: Date.now() - started, attempts: 0, circuit: 'OPEN' } };
+    const permit = breaker.begin();
+    if (!permit) {
+      return { driver: null, warning: { code: 'CIRCUIT_OPEN', message: '司机资料服务正在熔断保护中，订单状态仍可查看和操作。' }, meta: { elapsed_ms: Date.now() - started, attempts: 0, circuit: breaker.state } };
     }
     driverStats.calls++;
     let attempts = 0;
     try {
-      const data = await withRetry(async () => {
+      const driver = await withRetry(async () => {
         attempts++;
-        return rawDriver(id);
+        const data = await rawDriver(id);
+        const driver = data?.driver;
+        if (!driver || typeof driver !== 'object' || Array.isArray(driver) || driver.id !== id) {
+          throw new HttpError(502, 'BAD_UPSTREAM_RESPONSE', '司机资料格式无效');
+        }
+        if (needsOccupancy && driver.active_order_id !== null
+            && (typeof driver.active_order_id !== 'string' || !driver.active_order_id.trim())) {
+          throw new HttpError(502, 'BAD_UPSTREAM_RESPONSE', '司机占用状态格式无效');
+        }
+        return driver;
       }, {
-        attempts: driverAttempts,
+        attempts: permit.probe ? 1 : driverAttempts,
         backoffMs: 100,
         shouldRetry: error => !error.status || error.status >= 500 || error.status === 429,
         onAttempt: error => {
@@ -67,10 +82,10 @@ export function createQuery(options = {}) {
           log('order-query', 'driver_retry', { driver_id: id, attempt: attempts, code: error.code || error.name, message: error.message });
         },
       });
-      breaker.success(); driverStats.successes++;
-      return { driver: data.driver, warning: null, meta: { elapsed_ms: Date.now() - started, attempts, circuit: breaker.state } };
+      breaker.success(permit); driverStats.successes++;
+      return { driver, warning: null, meta: { elapsed_ms: Date.now() - started, attempts, circuit: breaker.state } };
     } catch (error) {
-      breaker.failure(); driverStats.failures++;
+      breaker.failure(permit); driverStats.failures++;
       if (/timeout|abort/i.test(`${error.name} ${error.code} ${error.message}`) || error.code === 'DEPENDENCY_UNAVAILABLE') driverStats.timeouts++;
       log('order-query', 'driver_fallback', { driver_id: id, code: error.code, attempts, elapsed_ms: Date.now() - started, circuit: breaker.state });
       const open = breaker.state === 'OPEN';
@@ -87,53 +102,80 @@ export function createQuery(options = {}) {
     }
   }
 
+  const upsertSnapshot = db.prepare(`INSERT INTO order_views(id,rider_id,driver_id,status,version,snapshot,projected_at)
+    VALUES(?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET
+      rider_id=excluded.rider_id,driver_id=excluded.driver_id,status=excluded.status,
+      version=excluded.version,snapshot=excluded.snapshot,projected_at=excluded.projected_at
+    WHERE excluded.version>order_views.version`);
+  const applySnapshot = order => upsertSnapshot.run(
+    order.id, order.rider_id, order.driver_id ?? null, order.status, order.version, JSON.stringify(order), now(),
+  ).changes;
+
   function project(event) {
+    validateOrderEvent(event);
     const d = event.data;
-    if (typeof event.event_id !== 'string' || event.event_id.length > 160 || typeof event.aggregate_id !== 'string' || !Number.isSafeInteger(event.version) || event.version < 1 || !d || d.id !== event.aggregate_id || d.version !== event.version || typeof d.rider_id !== 'string' || !states.includes(d.status)) {
-      throw new HttpError(400, 'INVALID_EVENT', '订单事件格式不正确');
-    }
     return transaction(db, () => {
       if (db.prepare('SELECT 1 FROM inbox WHERE event_id=?').get(event.event_id)) return { duplicate: true, applied: false };
-      const result = db.prepare(`INSERT INTO order_views(id,rider_id,driver_id,status,version,snapshot,projected_at) VALUES(?,?,?,?,?,?,?)
-        ON CONFLICT(id) DO UPDATE SET rider_id=excluded.rider_id,driver_id=excluded.driver_id,status=excluded.status,
-        version=excluded.version,snapshot=excluded.snapshot,projected_at=excluded.projected_at WHERE excluded.version>order_views.version`).run(d.id, d.rider_id, d.driver_id || null, d.status, d.version, JSON.stringify(d), now());
+      const applied = applySnapshot(d) === 1;
       db.prepare('INSERT INTO inbox VALUES(?,?,?,?)').run(event.event_id, d.id, event.version, now());
-      log('order-query', 'event_projected', { order_id: d.id, event_id: event.event_id, version: d.version, applied: result.changes === 1 });
-      return { duplicate: false, applied: result.changes === 1 };
+      log('order-query', 'event_projected', { order_id: d.id, event_id: event.event_id, version: d.version, applied });
+      return { duplicate: false, applied };
     });
   }
 
-  /** A new replica seeds its private read model from Order's API, never its DB. */
-  async function runBootstrap() {
-    bootstrap.attempts++;
+  /** Seed from Order once, then reconcile missed deliveries with bounded snapshot pages. */
+  async function refreshProjection() {
+    const cursor = bootstrap.cursor;
+    const initial = cursor === null;
+    if (initial) {
+      bootstrap.state = 'SYNCING';
+      bootstrap.attempts++;
+    }
     try {
-      const { data } = await discovery.request('order', '/internal/orders/snapshots', { timeoutMs: 2500 });
-      let applied = 0;
-      transaction(db, () => {
-        for (const order of data.orders || []) {
-          const result = db.prepare(`INSERT INTO order_views(id,rider_id,driver_id,status,version,snapshot,projected_at) VALUES(?,?,?,?,?,?,?)
-            ON CONFLICT(id) DO UPDATE SET rider_id=excluded.rider_id,driver_id=excluded.driver_id,status=excluded.status,
-            version=excluded.version,snapshot=excluded.snapshot,projected_at=excluded.projected_at WHERE excluded.version>order_views.version`)
-            .run(order.id, order.rider_id, order.driver_id || null, order.status, order.version, JSON.stringify(order), now());
-          applied += result.changes;
-        }
-      });
-      Object.assign(bootstrap, { state: 'READY', orders: data.orders?.length || 0, last_error: null, completed_at: now() });
-      log('order-query', 'bootstrap_ready', { orders: data.orders?.length || 0, applied });
-      return true;
+      const path = initial ? '/internal/orders/snapshots' : `/internal/orders/snapshots?after=${cursor}`;
+      const { data } = await discovery.request('order', path, { timeoutMs: 2500 });
+      if (!Number.isSafeInteger(data?.cursor) || data.cursor < (cursor ?? 0)
+          || !Array.isArray(data.orders) || !data.orders.every(isOrderSnapshot)) {
+        throw new HttpError(502, 'INVALID_SNAPSHOT_PAGE', '订单快照或同步游标格式无效');
+      }
+      const applied = data.orders.length
+        ? transaction(db, () => data.orders.reduce((count, order) => count + applySnapshot(order), 0))
+        : 0;
+      const syncedAt = now();
+      Object.assign(bootstrap, { cursor: data.cursor, last_error: null, last_synced_at: syncedAt });
+      if (initial) {
+        Object.assign(bootstrap, { state: 'READY', orders: data.orders.length, completed_at: syncedAt });
+        log('order-query', 'bootstrap_ready', { orders: data.orders.length, applied, cursor: data.cursor });
+      } else if (applied) {
+        log('order-query', 'projection_caught_up', { orders: applied, cursor: data.cursor });
+      }
     } catch (error) {
-      Object.assign(bootstrap, { state: 'RETRYING', last_error: error.code || error.message });
-      log('order-query', 'bootstrap_retry', { attempt: bootstrap.attempts, code: error.code || error.message });
-      return false;
+      const code = error.code || error.message;
+      if (initial) bootstrap.state = 'RETRYING';
+      if (initial || bootstrap.last_error !== code) log('order-query', initial ? 'bootstrap_retry' : 'projection_sync_retry', { cursor, code });
+      bootstrap.last_error = code;
     }
   }
-  let bootstrapTimer;
+  let syncTimer, pendingSync;
+  function synchronize() {
+    if (!pendingSync) {
+      pendingSync = refreshProjection().finally(() => { pendingSync = undefined; });
+    }
+    return pendingSync;
+  }
   function start() {
-    if (bootstrapTimer) return;
-    const attempt = async () => { if (await runBootstrap()) { clearInterval(bootstrapTimer); bootstrapTimer = undefined; } };
-    void attempt();
-    bootstrapTimer = setInterval(attempt, 5000);
-    bootstrapTimer.unref();
+    if (syncTimer) return;
+    requireBootstrap = true;
+    void synchronize();
+    syncTimer = setInterval(synchronize, options.replicaSyncMs ?? 2000);
+    syncTimer.unref();
+  }
+
+  function assertReady() {
+    if (readyToRead()) return;
+    const error = new HttpError(503, 'QUERY_BOOTSTRAPPING', '订单查询副本正在同步，请稍后重试');
+    error.headers = { 'Retry-After': '1' };
+    throw error;
   }
 
   function authorize(order, actor) {
@@ -143,17 +185,15 @@ export function createQuery(options = {}) {
     const row = db.prepare('SELECT snapshot,projected_at FROM order_views WHERE id=?').get(id);
     return row ? { order: JSON.parse(row.snapshot), projected_at: row.projected_at } : null;
   };
-  async function combine(found, minVersion = 0, initialWarnings = []) {
+  async function combine(found, minVersion = 0, driverLookup) {
     const { order, projected_at } = found;
-    const warnings = [...initialWarnings];
-    let driver = null; let degradation;
-    if (order.driver_id) {
-      const guarded = await guardedDriver(order.driver_id);
-      driver = guarded.driver;
-      if (guarded.warning) { warnings.push(guarded.warning); degradation = { dependency: 'driver-service', ...guarded.meta, code: guarded.warning.code }; }
-    }
+    const lookup = driverLookup ?? (order.driver_id ? await guardedDriver(order.driver_id) : null);
+    const warnings = lookup?.warning ? [lookup.warning] : [];
+    const degradation = lookup?.warning
+      ? { dependency: 'driver-service', ...lookup.meta, code: lookup.warning.code }
+      : null;
     return {
-      order, driver, projection_version: order.version, projected_at,
+      order, driver: order.driver_id ? lookup?.driver ?? null : null, projection_version: order.version, projected_at,
       sync_pending: order.version < minVersion, partial: warnings.length > 0, degraded: warnings.length > 0,
       warnings, ...(degradation ? { degradation } : {}),
     };
@@ -167,8 +207,8 @@ export function createQuery(options = {}) {
   }
 
   const routes = [
-    { method: 'GET', path: '/health', role: 'PUBLIC', handler: () => ({
-      status: 'ok', service: 'order-query', database: db.prepare('SELECT 1 AS ok').get().ok === 1 ? 'ok' : 'error',
+    { method: 'GET', path: '/health', role: 'PUBLIC', handler: () => response(readyToRead() ? 200 : 503, {
+      status: readyToRead() ? 'ok' : 'starting', service: 'order-query', database: db.prepare('SELECT 1 AS ok').get().ok === 1 ? 'ok' : 'error',
       bootstrap_state: bootstrap.state, instance_id: process.env.INSTANCE_ID || null,
     }) },
     { method: 'POST', path: '/internal/events', role: 'INTERNAL', handler: c => project(c.body) },
@@ -177,20 +217,26 @@ export function createQuery(options = {}) {
       circuit: breaker.snapshot(), rate_limit: limiter.snapshot(), driver: { ...driverStats, timeout_ms: driverTimeoutMs, max_attempts: driverAttempts },
       discovery: discovery.snapshot(), bootstrap,
     }) },
-    { method: 'POST', path: '/internal/bootstrap', role: 'INTERNAL', handler: async () => { await runBootstrap(); return { ...bootstrap }; } },
-    { method: 'GET', path: '/orders/history', role: 'RIDER', handler: c => ({ orders: db.prepare('SELECT snapshot FROM order_views WHERE rider_id=? ORDER BY json_extract(snapshot,\'$.created_at\') DESC LIMIT 100').all(c.actor.id).map(r => JSON.parse(r.snapshot)), source: 'order-query', eventual_consistency: true }) },
+    { method: 'POST', path: '/internal/bootstrap', role: 'INTERNAL', handler: async () => { await synchronize(); return { ...bootstrap }; } },
+    { method: 'GET', path: '/orders/history', role: 'RIDER', handler: c => {
+      assertReady();
+      return { orders: db.prepare('SELECT snapshot FROM order_views WHERE rider_id=? ORDER BY json_extract(snapshot,\'$.created_at\') DESC LIMIT 100').all(c.actor.id).map(r => JSON.parse(r.snapshot)), source: 'order-query', eventual_consistency: true };
+    } },
     { method: 'GET', path: '/orders/current', role: 'ANY', handler: async c => {
+      assertReady();
       enforceRate(c.actor);
-      let found; const warnings = [];
+      let found; let lookup;
+      const warnings = [];
       if (c.actor.role === 'DRIVER') {
-        const guarded = await guardedDriver(c.actor.id);
-        if (guarded.warning) warnings.push(guarded.warning);
-        if (guarded.driver && !guarded.driver.active_order_id) return { order: null, sync_pending: false, partial: warnings.length > 0, warnings };
-        if (guarded.driver?.active_order_id) {
-          found = find(guarded.driver.active_order_id);
+        lookup = await guardedDriver(c.actor.id, { needsOccupancy: true });
+        if (lookup.warning) warnings.push(lookup.warning);
+        if (lookup.driver && lookup.driver.active_order_id === null) return { order: null, sync_pending: false, partial: false, warnings };
+        if (lookup.driver) {
+          found = find(lookup.driver.active_order_id);
           if (!found) return response(202, { order: null, sync_pending: true, partial: warnings.length > 0, warnings });
         } else {
-          const row = db.prepare(`SELECT id FROM order_views WHERE driver_id=? AND status IN ${activeSql} ORDER BY version DESC LIMIT 1`).get(c.actor.id);
+          const row = db.prepare(`SELECT id FROM order_views WHERE driver_id=? AND status IN ${activeSql}
+            ORDER BY json_extract(snapshot,'$.created_at') DESC,id DESC LIMIT 1`).get(c.actor.id);
           found = row ? find(row.id) : null;
         }
       } else {
@@ -198,9 +244,10 @@ export function createQuery(options = {}) {
         found = row ? find(row.id) : null;
       }
       if (!found) return { order: null, partial: warnings.length > 0, sync_pending: false, warnings };
-      authorize(found.order, c.actor); return combine(found, 0, warnings);
+      authorize(found.order, c.actor); return combine(found, 0, lookup);
     } },
     { method: 'GET', path: '/orders/:id', role: 'ANY', handler: async c => {
+      assertReady();
       enforceRate(c.actor);
       const minVersion = Number(c.query.get('min_version') || 0);
       if (!Number.isSafeInteger(minVersion) || minVersion < 0) throw new HttpError(400, 'INVALID_VERSION', '查询版本须为非负整数');
@@ -216,8 +263,9 @@ export function createQuery(options = {}) {
   ];
   const server = createServer({ service: 'order-query', routes });
   async function close() {
-    clearInterval(bootstrapTimer);
+    clearInterval(syncTimer);
     if (server.listening) await new Promise((resolve, reject) => server.close(e => e ? reject(e) : resolve()));
+    await pendingSync;
     db.close();
   }
   return { server, db, project, discovery, breaker, limiter, bootstrap, start, close };

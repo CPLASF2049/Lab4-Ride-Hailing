@@ -1,0 +1,228 @@
+{
+  "executed_at": "2026-11-27T07:00:45.375Z",
+  "platform": {
+    "docker_version": "28.0.4",
+    "os": "linux",
+    "compose_version": "2.38.2"
+  },
+  "service": "order-query",
+  "before": {
+    "healthy": true,
+    "instances": 1,
+    "checks": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ]
+  },
+  "during_scale_up": {
+    "containers": [
+      {
+        "name": "lab4-ci-order-query-1",
+        "status": "running"
+      },
+      {
+        "name": "lab4-ci-order-query-2",
+        "status": "created"
+      }
+    ],
+    "cancelled": {
+      "instance": "order-query-640f23d5509b-3102",
+      "http_status": 200,
+      "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+      "order_status": "CANCELLED",
+      "order_version": 4
+    },
+    "created_order_id": "ord_79629083-11d4-4285-a4a2-cf147909c3f9"
+  },
+  "after_scale_up": {
+    "healthy": true,
+    "instances": 2,
+    "checks": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ],
+    "distribution": {
+      "order-query-640f23d5509b-3102": 6,
+      "order-query-8c13a063ffea-3102": 6
+    },
+    "samples": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      }
+    ],
+    "cancelled_on_both": [
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      }
+    ],
+    "created_on_both": [
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_79629083-11d4-4285-a4a2-cf147909c3f9",
+        "order_status": "MATCHING",
+        "order_version": 1
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_79629083-11d4-4285-a4a2-cf147909c3f9",
+        "order_status": "MATCHING",
+        "order_version": 1
+      }
+    ],
+    "live_write_on_both": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_8445ef34-2197-4004-a16f-eab688899a3d",
+        "order_status": "MATCHING",
+        "order_version": 1
+      },
+      {
+        "instance": "order-query-8c13a063ffea-3102",
+        "http_status": 200,
+        "order_id": "ord_8445ef34-2197-4004-a16f-eab688899a3d",
+        "order_status": "MATCHING",
+        "order_version": 1
+      }
+    ]
+  },
+  "after_scale_down": {
+    "healthy": true,
+    "instances": 1,
+    "checks": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "healthy": true,
+        "bootstrap_state": "READY"
+      }
+    ],
+    "verified_orders": [
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_bd16b4b0-9df3-44e8-a54b-7102a28a15a4",
+        "order_status": "CANCELLED",
+        "order_version": 4
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_79629083-11d4-4285-a4a2-cf147909c3f9",
+        "order_status": "MATCHING",
+        "order_version": 1
+      },
+      {
+        "instance": "order-query-640f23d5509b-3102",
+        "http_status": 200,
+        "order_id": "ord_8445ef34-2197-4004-a16f-eab688899a3d",
+        "order_status": "MATCHING",
+        "order_version": 1
+      }
+    ]
+  }
+}
