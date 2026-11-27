@@ -278,7 +278,7 @@ order-query-1 | {"action":"event_projected","version":3,"applied":true}
 | --- | --- | --- | --- |
 | 超时 | 单次依赖 600ms | `Discovery.request` 的 `AbortSignal.timeout`，由 `guardedDriver` 传入 | 组合查询应在 1 秒级返回；600ms 足以覆盖正常局域网调用，又能快速失败 |
 | 重试 | 最多 2 次尝试（1 次重试），退避 100ms；仅超时、5xx、429 | [common/resilience.mjs](common/resilience.mjs) `withRetry` | 幂等 GET 可安全重试；业务 4xx 不重试，避免放大错误 |
-| 熔断 | 10 秒窗口 5 次失败，开路 8 秒，半开 1 次探测 | `CircuitBreaker`，每个 order-query 实例独立 | 防止持续故障拖慢所有请求；8 秒后自动探测，无需人工 |
+| 熔断 | 10 秒窗口内连续 5 次失败，开路 8 秒，半开 1 次探测 | `CircuitBreaker`，每个 order-query 实例独立 | 开路后暂停调用。等待结束后只发出一次试探调用 |
 | 降级 | `partial=true`、`warnings`、`degradation` | `guardedDriver` 捕获后返回空司机资料 | 订单本身仍可展示和操作，避免整个详情 500 |
 | 限流 | 每用户 60 容量、30 rps；网关每 IP 80/40 | `RateLimiter` + 网关 `TokenBucket` | 保护查询服务；按用户/来源限制，超限返回 429 和 `Retry-After` |
 
@@ -501,7 +501,7 @@ npm test
 | `node scripts/dev.mjs` 与 `node scripts/smoke.mjs` | 本机启动 7 个独立进程，通过注册中心完成叫车、接单及组合查询 |
 | 扩容回归 | 暂停新副本引导，制造目录缓存漏投，验证网关切换、新副本追上创建与取消、注销后剩余副本继续服务 |
 
-本次扩缩容回归使用本地 HTTP 服务。第 5 节的 Docker Compose 记录来自 11 月 26 日。
+第 5 节的 Docker Compose 记录来自 11 月 26 日。第 7.6 节记录了本地回归后追加的容器复验。
 
 ### 7.6 扩缩容与容错自动验收
 
@@ -509,4 +509,13 @@ npm test
 
 并发容错测试验证半开阶段只允许一个查询请求向 Driver 探测，当前探测失败时直接重新开路。开路前发出、在半开阶段才返回的请求不会提前关闭熔断器。相关用例见 [查询组件测试](tests/query.component.test.mjs)。
 
-GitHub Actions 会在独立的 Linux Compose 项目运行自动化测试、真实 HTTP 验收和扩缩容脚本，并上传 `lab4-verification` 验证材料。见 [工作流运行记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/workflows/lab4.yml)。
+11 月 27 日在 GitHub Actions 的 Ubuntu 24.04 环境复验，使用 Docker Engine 28.0.4 和 Compose 2.38.2。7 个容器正常启动，91 项自动化测试和 11 组真实 HTTP 服务验收通过。
+
+| 验收阶段 | 实测结果 |
+| --- | --- |
+| 扩容准备 | 1 个查询容器运行，第二个已创建。此时新建与取消均成功，原副本返回对应订单 |
+| 扩容完成 | 两个副本读到匹配中的新订单和已取消订单，随后写入的第三笔订单也能从两边读取 |
+| 网关分流 | 12 次详情查询均返回 200，两个副本各处理 6 次 |
+| 缩容完成 | 查询副本数量回到 1，剩余实例返回三笔订单 |
+
+此次产物包含测试输出、服务验收、缩放数据和容器日志。见 [扩缩容实测数据](docs/evidence/scaling-with-writes.json)和 [GitHub Actions 成功记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/runs/45955444003)。

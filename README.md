@@ -16,7 +16,7 @@
 
 | 成员 | 学号 | 负责范围 |
 | --- | --- | --- |
-| 李金正 | 26113050066 | 注册中心与网关、服务发现与订单链路、查询副本就绪与读模型补齐、Compose 扩缩容读写验收、GitHub Actions 自动验证和 README 更新 |
+| 李金正 | 26113050066 | 注册中心与网关、服务发现与订单链路、查询副本就绪与读模型补齐、熔断并发回归、Compose 扩缩容读写验收、GitHub Actions 和 README |
 | 李思源 | 26213050248 | 订单查询容错、契约测试、测试整理、报告与演示材料 |
 | 共同核对 | — | 治理参数、验收记录、代码与报告一致性 |
 
@@ -157,6 +157,8 @@ docker compose down --volumes
 
 每次推送后，GitHub Actions 在 Ubuntu 的临时 Compose 项目执行同样的检查。运行详情中的 `lab4-verification` 包含扩缩容结果、服务验收和容器日志。[自动验收记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/workflows/lab4.yml)
 
+11 月 27 日的容器复验通过。扩容后 12 次查询由两个副本各处理 6 次，两边都查到扩容期间的新建和取消，以及扩容完成后的新单。缩回 1 个副本后，三笔订单仍可查询。[扩缩容实测数据](docs/evidence/scaling-with-writes.json) · [GitHub Actions 成功记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/runs/45955444003)
+
 ## 7. 订单查询容错
 
 对象：`GET /api/orders/{id}`（order-query），依赖 `driver-service` 的 `/internal/drivers/{id}`。
@@ -165,7 +167,7 @@ docker compose down --volumes
 | --- | --- | --- |
 | 超时 | `DRIVER_TIMEOUT_MS=600` | 单次依赖调用 600ms 超时，超时进入重试 |
 | 重试 | `DRIVER_ATTEMPTS=2`，退避 100ms | 仅超时、5xx、429 重试；4xx 不重试 |
-| 熔断 | 10 秒窗口内 5 次失败，开路 8 秒 | 半开时最多一个请求探测，单次调用失败即重新开路。其他请求继续降级 |
+| 熔断 | 10 秒窗口内连续 5 次失败，开路 8 秒 | 半开时最多一个请求探测，单次调用失败即重新开路。其他请求继续降级 |
 | 降级 | `partial=true`、`warnings`、`degradation` | 保留订单读模型，司机资料为空，订单仍可操作 |
 | 限流 | 查询每用户 60 容量 / 30 rps；网关每 IP 80 / 40 rps | 超限返回 `429 RATE_LIMITED` 与 `Retry-After: 1` |
 
@@ -219,6 +221,7 @@ npm run test:fault   # 容错场景
 | [docs/evidence/contract-tests.tap](docs/evidence/contract-tests.tap) | 契约测试 3 项通过 |
 | [docs/evidence/gateway-trace.json](docs/evidence/gateway-trace.json) | 统一入口、实例 ID、订单 201/接单 200/详情 200、注册目录、容器状态与关联日志 |
 | [docs/evidence/scaling.json](docs/evidence/scaling.json) | order-query 1→2→1、两副本各 6 次请求 |
+| [docs/evidence/scaling-with-writes.json](docs/evidence/scaling-with-writes.json) | Ubuntu 容器复验，覆盖扩容期间新建和取消、双副本读写与缩容后查询 |
 | [docs/evidence/fault-tolerance.json](docs/evidence/fault-tolerance.json) | 超时、重试、熔断、恢复、限流 |
 | [docs/evidence/fault-tolerance-docker.json](docs/evidence/fault-tolerance-docker.json) | 停止/恢复 driver 容器的实际表现 |
 | [docs/evidence/compose-ps.txt](docs/evidence/compose-ps.txt) | 7 个容器健康状态 |
