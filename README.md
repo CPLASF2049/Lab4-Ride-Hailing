@@ -12,11 +12,11 @@
 
 ## 1. 小组与分工安排
 
-沿用 Lab 2/3 第 32 组。下表为本实验分工安排，提交前由组员核对；不声明已发生的个人提交记录。
+沿用 Lab 2/3 第 32 组。下表列出本实验的分工和复核范围。
 
 | 成员 | 学号 | 负责范围 |
 | --- | --- | --- |
-| 李金正 | 26113050066 | 注册中心与网关、服务发现改造、订单请求链路、Compose 部署与扩缩容验证 |
+| 李金正 | 26113050066 | 注册中心与网关、服务发现与订单链路、查询副本就绪与读模型补齐、Compose 扩缩容读写验收、GitHub Actions 自动验证和 README 更新 |
 | 李思源 | 26213050248 | 订单查询容错、契约测试、测试整理、报告与演示材料 |
 | 共同核对 | — | 治理参数、验收记录、代码与报告一致性 |
 
@@ -132,9 +132,6 @@ docker compose up -d --scale order-query=2 --no-recreate
 docker compose ps                       # order-query-1 / order-query-2
 curl http://localhost:8500/v1/catalog/order-query
 
-# 自动验证：扩容、流量分布、缩容并保存证据
-node scripts/scale-demo.mjs
-
 # 缩容回 1 个
 docker compose up -d --scale order-query=1 --no-recreate
 ```
@@ -142,6 +139,23 @@ docker compose up -d --scale order-query=1 --no-recreate
 新副本加载初始快照前返回 `503 QUERY_BOOTSTRAPPING`，网关会切换到其他可用副本。Order 的 Outbox 向发现到的所有查询实例投递事件。查询副本每 2 秒按游标补取更新，弥补注册目录缓存期间可能遗漏的事件。快照和事件都只用较新的订单版本更新读模型。
 
 11 月 26 日的 Docker Compose 验收完成了 1 → 2 → 1 扩缩容，两个副本各处理 6 次查询。11 月 27 日的本地回归覆盖了扩容期间继续查询、新建订单与取消订单。详见 [Compose 扩缩容记录](docs/evidence/scaling.json)和[本地复核报告](lab4-report.md#75-2026-11-27-本地复核)。
+
+### 自动验收
+
+在独立的 Compose 项目中从 1 个查询副本启动，使用空闲的演示乘客和司机账号。
+
+```powershell
+$env:COMPOSE_PROJECT_NAME = 'lab4-scale-check'
+$env:GATEWAY_PORT = '18083'
+$env:REGISTRY_PORT = '18500'
+docker compose up -d --build --wait
+node scripts/scale-demo.mjs
+docker compose down --volumes
+```
+
+脚本先准备第二个查询容器，在它启动前并发新建一单、取消另一单。两个副本就绪后，脚本确认它们都能读到这两笔变更和扩容后新写入的订单，并记录 12 次查询的实例分布。缩回 1 个副本后，再校验剩余实例能查到三笔订单。结果默认保存到 `.runtime/scale-demo/scaling.json`。使用 `LAB4_EVIDENCE_DIR` 可指定输出目录。
+
+每次推送后，GitHub Actions 在 Ubuntu 的临时 Compose 项目执行同样的检查。运行详情中的 `lab4-verification` 包含扩缩容结果、服务验收和容器日志。[自动验收记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/workflows/lab4.yml)
 
 ## 7. 订单查询容错
 
@@ -151,7 +165,7 @@ docker compose up -d --scale order-query=1 --no-recreate
 | --- | --- | --- |
 | 超时 | `DRIVER_TIMEOUT_MS=600` | 单次依赖调用 600ms 超时，超时进入重试 |
 | 重试 | `DRIVER_ATTEMPTS=2`，退避 100ms | 仅超时、5xx、429 重试；4xx 不重试 |
-| 熔断 | 10 秒窗口内 5 次失败，开路 8 秒，半开 1 次探测 | 开路期间直接降级，不调用下游 |
+| 熔断 | 10 秒窗口内 5 次失败，开路 8 秒 | 半开时最多一个请求探测，单次调用失败即重新开路。其他请求继续降级 |
 | 降级 | `partial=true`、`warnings`、`degradation` | 保留订单读模型，司机资料为空，订单仍可操作 |
 | 限流 | 查询每用户 60 容量 / 30 rps；网关每 IP 80 / 40 rps | 超限返回 `429 RATE_LIMITED` 与 `Retry-After: 1` |
 
@@ -192,7 +206,7 @@ npm run test:contracts
 ## 9. 测试与证据
 
 ```powershell
-npm test             # 全部 89 项
+npm test             # 全部 91 项
 npm run test:unit    # 领域、前端状态
 npm run test:component
 npm run test:contracts
@@ -209,7 +223,7 @@ npm run test:fault   # 容错场景
 | [docs/evidence/fault-tolerance-docker.json](docs/evidence/fault-tolerance-docker.json) | 停止/恢复 driver 容器的实际表现 |
 | [docs/evidence/compose-ps.txt](docs/evidence/compose-ps.txt) | 7 个容器健康状态 |
 
-11 月 27 日在 Windows 和 Node.js v24.22.3 上复核，89 项自动化测试和 11 组真实 HTTP 服务验收通过。完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
+11 月 27 日在 Windows 和 Node.js v24.22.3 上复核，91 项自动化测试和 11 组真实 HTTP 服务验收通过。完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
 
 ## 10. 目录结构
 

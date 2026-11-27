@@ -34,31 +34,51 @@ export class CircuitBreaker {
   constructor({ failureThreshold = 5, windowMs = 10000, openMs = 8000, halfOpenProbes = 1, name = 'dependency' } = {}) {
     Object.assign(this, { failureThreshold, windowMs, openMs, halfOpenProbes, name });
     this.state = 'CLOSED'; this.failures = []; this.openedAt = 0; this.probes = 0;
+    this.permit = { probe: false };
     this.counters = { success: 0, failure: 0, rejected: 0, opened: 0, half_open: 0, closed: 0 };
   }
-  allow(nowMs = Date.now()) {
-    if (this.state === 'CLOSED') return true;
-    if (this.state === 'OPEN') {
-      if (nowMs - this.openedAt >= this.openMs) { this.state = 'HALF_OPEN'; this.probes = 0; this.counters.half_open++; return true; }
-      this.counters.rejected++; return false;
+  begin(nowMs = Date.now()) {
+    if (this.state === 'CLOSED') return this.permit;
+    if (this.state === 'OPEN' && nowMs - this.openedAt >= this.openMs) {
+      this.state = 'HALF_OPEN';
+      this.probes = 0;
+      this.permit = { probe: true };
+      this.counters.half_open++;
     }
-    if (this.probes < this.halfOpenProbes) { this.probes++; return true; }
-    this.counters.rejected++; return false;
+    if (this.state === 'HALF_OPEN' && this.probes < this.halfOpenProbes) {
+      this.probes++;
+      return this.permit;
+    }
+    this.counters.rejected++;
+    return null;
   }
-  success() {
+  success(permit) {
     this.counters.success++;
-    if (this.state === 'HALF_OPEN') { this.state = 'CLOSED'; this.failures = []; this.counters.closed++; }
-    else if (this.state === 'CLOSED') this.failures = [];
+    // A call that started before the circuit opened cannot complete the recovery probe.
+    if (permit !== this.permit) return;
+    this.failures = [];
+    if (this.state === 'HALF_OPEN') {
+      this.state = 'CLOSED';
+      this.permit = { probe: false };
+      this.counters.closed++;
+    }
   }
-  failure(nowMs = Date.now()) {
+  failure(permit, nowMs = Date.now()) {
     this.counters.failure++;
+    if (permit !== this.permit) return;
     if (this.state === 'HALF_OPEN') { this.trip(nowMs); return; }
     if (this.state !== 'CLOSED') return;
     this.failures.push(nowMs);
     this.failures = this.failures.filter(time => nowMs - time <= this.windowMs);
     if (this.failures.length >= this.failureThreshold) this.trip(nowMs);
   }
-  trip(nowMs) { this.state = 'OPEN'; this.openedAt = nowMs; this.failures = []; this.counters.opened++; }
+  trip(nowMs) {
+    this.state = 'OPEN';
+    this.openedAt = nowMs;
+    this.failures = [];
+    this.permit = null;
+    this.counters.opened++;
+  }
   snapshot() {
     return { name: this.name, state: this.state, failures_in_window: this.failures.length, counters: { ...this.counters }, failure_threshold: this.failureThreshold, window_ms: this.windowMs, open_ms: this.openMs };
   }

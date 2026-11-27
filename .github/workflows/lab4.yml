@@ -1,0 +1,58 @@
+name: Lab 4 verification
+
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      COMPOSE_PROJECT_NAME: lab4-ci
+      GATEWAY_PORT: '18083'
+      REGISTRY_PORT: '18500'
+      LAB4_EVIDENCE_DIR: lab4-ci-evidence
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Run automated checks and service acceptance
+        run: |
+          mkdir -p "$LAB4_EVIDENCE_DIR"
+          npm test | tee "$LAB4_EVIDENCE_DIR/tests.log"
+          npm run check
+          python3 scripts/check_docs.py
+          npm run test:e2e | tee "$LAB4_EVIDENCE_DIR/acceptance.log"
+          cp docs/evidence/acceptance.json "$LAB4_EVIDENCE_DIR/"
+      - name: Start seven Compose services
+        run: |
+          docker compose version
+          docker compose config --quiet
+          docker compose up -d --build --wait --wait-timeout 90
+          docker compose ps
+      - name: Verify scale-out with order writes and scale back in
+        run: node scripts/scale-demo.mjs
+      - name: Collect Compose logs and remove the temporary stack
+        if: always()
+        run: |
+          mkdir -p "$LAB4_EVIDENCE_DIR"
+          docker compose ps --all > "$LAB4_EVIDENCE_DIR/compose-ps.txt" || true
+          docker compose logs --no-color > "$LAB4_EVIDENCE_DIR/compose.log" || true
+          docker compose down --volumes
+      - name: Upload Lab 4 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: lab4-verification
+          path: lab4-ci-evidence/
+          retention-days: 30

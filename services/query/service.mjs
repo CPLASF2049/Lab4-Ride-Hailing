@@ -53,8 +53,9 @@ export function createQuery(options = {}) {
    */
   async function guardedDriver(id, { needsOccupancy = false } = {}) {
     const started = Date.now();
-    if (!breaker.allow()) {
-      return { driver: null, warning: { code: 'CIRCUIT_OPEN', message: '司机资料服务正在熔断保护中，订单状态仍可查看和操作。' }, meta: { elapsed_ms: Date.now() - started, attempts: 0, circuit: 'OPEN' } };
+    const permit = breaker.begin();
+    if (!permit) {
+      return { driver: null, warning: { code: 'CIRCUIT_OPEN', message: '司机资料服务正在熔断保护中，订单状态仍可查看和操作。' }, meta: { elapsed_ms: Date.now() - started, attempts: 0, circuit: breaker.state } };
     }
     driverStats.calls++;
     let attempts = 0;
@@ -72,7 +73,7 @@ export function createQuery(options = {}) {
         }
         return driver;
       }, {
-        attempts: driverAttempts,
+        attempts: permit.probe ? 1 : driverAttempts,
         backoffMs: 100,
         shouldRetry: error => !error.status || error.status >= 500 || error.status === 429,
         onAttempt: error => {
@@ -81,10 +82,10 @@ export function createQuery(options = {}) {
           log('order-query', 'driver_retry', { driver_id: id, attempt: attempts, code: error.code || error.name, message: error.message });
         },
       });
-      breaker.success(); driverStats.successes++;
+      breaker.success(permit); driverStats.successes++;
       return { driver, warning: null, meta: { elapsed_ms: Date.now() - started, attempts, circuit: breaker.state } };
     } catch (error) {
-      breaker.failure(); driverStats.failures++;
+      breaker.failure(permit); driverStats.failures++;
       if (/timeout|abort/i.test(`${error.name} ${error.code} ${error.message}`) || error.code === 'DEPENDENCY_UNAVAILABLE') driverStats.timeouts++;
       log('order-query', 'driver_fallback', { driver_id: id, code: error.code, attempts, elapsed_ms: Date.now() - started, circuit: breaker.state });
       const open = breaker.state === 'OPEN';

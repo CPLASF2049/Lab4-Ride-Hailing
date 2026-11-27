@@ -52,11 +52,12 @@ services:
       DRIVER_TIMEOUT_MS: ${DRIVER_TIMEOUT_MS:-600}
       DRIVER_ATTEMPTS: ${DRIVER_ATTEMPTS:-2}
       CIRCUIT_FAILURE_THRESHOLD: ${CIRCUIT_FAILURE_THRESHOLD:-5}
+      CIRCUIT_WINDOW_MS: ${CIRCUIT_WINDOW_MS:-10000}
       CIRCUIT_OPEN_MS: ${CIRCUIT_OPEN_MS:-8000}
       QUERY_RATE_CAPACITY: ${QUERY_RATE_CAPACITY:-60}
       QUERY_RATE_REFILL: ${QUERY_RATE_REFILL:-30}
     # No shared volume: each read-model replica owns a private projection,
-    # seeded from Order's API at startup and kept current by event fan-out.
+    # seeded from Order's API and kept current by push events and incremental sync.
     depends_on:
       registry: { condition: service_healthy }
       order: { condition: service_started }

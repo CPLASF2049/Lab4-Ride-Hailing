@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 import { CircuitBreaker } from '../common/resilience.mjs';
 import { createQuery } from '../services/query/service.mjs';
 import { Order } from '../services/order/domain/order.mjs';
@@ -121,4 +122,78 @@ test('CQRS: driver fallback orders trips by creation time rather than unrelated 
   assert.equal(result.status, 200);
   assert.equal(result.body.order.id, 'ord-new');
   assert.equal(result.body.partial, true);
+});
+
+test('CQRS: only the current half-open probe can complete recovery under concurrent reads', { timeout: 6000 }, async t => {
+  const breaker = new CircuitBreaker({ failureThreshold: 1, openMs: 80 });
+  const oldStarted = Promise.withResolvers();
+  const finishOld = Promise.withResolvers();
+  const probeStarted = Promise.withResolvers();
+  const finishProbe = Promise.withResolvers();
+  let calls = 0;
+  const service = createQuery({
+    dbPath: ':memory:', breaker, driverAttempts: 1,
+    getDriver: async id => {
+      calls++;
+      if (calls === 1) {
+        oldStarted.resolve();
+        await finishOld.promise;
+      } else if (calls === 2) {
+        throw new Error('driver unavailable');
+      } else if (calls === 3) {
+        probeStarted.resolve();
+        await finishProbe.promise;
+      }
+      return { driver: { id, name: '王师傅' } };
+    },
+  });
+  t.after(async () => {
+    finishOld.resolve();
+    finishProbe.resolve();
+    await service.close();
+  });
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const detail = () => request(base, '/orders/ord-projection');
+  const lateResponse = detail();
+  await oldStarted.promise;
+  assert.equal((await detail()).body.warnings[0].code, 'CIRCUIT_OPEN');
+  await delay(90);
+
+  const probe = detail();
+  await probeStarted.promise;
+  const concurrent = await Promise.all([detail(), detail(), detail()]);
+  assert.equal(calls, 3);
+  for (const read of concurrent) {
+    assert.equal(read.body.degradation.circuit, 'HALF_OPEN');
+    assert.equal(read.body.degradation.attempts, 0);
+  }
+
+  finishOld.resolve();
+  assert.equal((await lateResponse).body.partial, false);
+  assert.equal(breaker.state, 'HALF_OPEN');
+  finishProbe.resolve();
+  assert.equal((await probe).body.partial, false);
+  assert.equal(breaker.state, 'CLOSED');
+});
+
+test('CQRS: a failed half-open probe reopens the circuit after one dependency attempt', async t => {
+  const breaker = new CircuitBreaker({ failureThreshold: 1, openMs: 80 });
+  let calls = 0;
+  const service = createQuery({
+    dbPath: ':memory:', breaker, driverAttempts: 2,
+    getDriver: async () => {
+      calls++;
+      throw new Error('driver unavailable');
+    },
+  });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const detail = () => request(base, '/orders/ord-projection');
+  assert.equal((await detail()).body.degradation.attempts, 2);
+  await delay(90);
+  assert.equal((await detail()).body.degradation.attempts, 1);
+  assert.equal(calls, 3);
+  assert.equal(breaker.state, 'OPEN');
 });

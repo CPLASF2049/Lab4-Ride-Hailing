@@ -502,3 +502,11 @@ npm test
 | 扩容回归 | 暂停新副本引导，制造目录缓存漏投，验证网关切换、新副本追上创建与取消、注销后剩余副本继续服务 |
 
 本次扩缩容回归使用本地 HTTP 服务。第 5 节的 Docker Compose 记录来自 11 月 26 日。
+
+### 7.6 扩缩容与容错自动验收
+
+扩缩容脚本在第二个容器启动前并发新建一笔订单并取消另一笔。扩容后按 `X-Instance` 确认两个副本都读到了变更，再写入一笔订单并确认两个副本都能查询。缩容后检查剩余实例仍能读取三笔订单。
+
+并发容错测试验证半开阶段只允许一个查询请求向 Driver 探测，当前探测失败时直接重新开路。开路前发出、在半开阶段才返回的请求不会提前关闭熔断器。相关用例见 [查询组件测试](tests/query.component.test.mjs)。
+
+GitHub Actions 会在独立的 Linux Compose 项目运行自动化测试、真实 HTTP 验收和扩缩容脚本，并上传 `lab4-verification` 验证材料。见 [工作流运行记录](https://github.com/CPLASF2049/Lab4-Ride-Hailing/actions/workflows/lab4.yml)。
