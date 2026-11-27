@@ -31,8 +31,9 @@
 
 ## 3. 一键启动
 
+在仓库根目录执行以下命令。
+
 ```powershell
-cd lab4-rideshare
 docker compose config --quiet      # 可选：校验配置
 docker compose up -d --build       # 构建镜像并启动 7 个容器
 docker compose ps                  # 7 个服务均为 healthy
@@ -69,7 +70,7 @@ docker compose down --volumes                       # 完全重置（含数据�
 | `dispatch` | `dispatch` | 3104 | — | 派单任务与顺序 offer |
 | `pricing` | `pricing` | 3105 | — | 预设地点、报价与计费 |
 
-`order-query` **不挂共享卷**：每个副本拥有私有读模型，启动时从 Order API 引导，随后接收所有订单事件。这样扩缩容不会出现多副本共享同一个 SQLite 文件。
+`order-query` 的每个副本使用独立 SQLite。副本从 Order API 初始化读模型，持续接收订单事件，并定期补取漏掉的更新。
 
 ## 5. 注册发现与统一网关
 
@@ -138,7 +139,9 @@ node scripts/scale-demo.mjs
 docker compose up -d --scale order-query=1 --no-recreate
 ```
 
-新副本注册后自动从 Order API 引导读模型；Order 的 Outbox 会把每个订单事件投递到**所有** order-query 实例，副本以 inbox 去重和版本守卫保持幂等。实际结果见 [docs/evidence/scaling.json](docs/evidence/scaling.json)：1 → 2 → 1，12 次查询在两个副本上各 6 次。
+新副本加载初始快照前返回 `503 QUERY_BOOTSTRAPPING`，网关会切换到其他可用副本。Order 的 Outbox 向发现到的所有查询实例投递事件。查询副本每 2 秒按游标补取更新，弥补注册目录缓存期间可能遗漏的事件。快照和事件都只用较新的订单版本更新读模型。
+
+11 月 26 日的 Docker Compose 验收完成了 1 → 2 → 1 扩缩容，两个副本各处理 6 次查询。11 月 27 日的本地回归覆盖了扩容期间继续查询、新建订单与取消订单。详见 [Compose 扩缩容记录](docs/evidence/scaling.json)和[本地复核报告](lab4-report.md#75-2026-11-27-本地复核)。
 
 ## 7. 订单查询容错
 
@@ -189,7 +192,7 @@ npm run test:contracts
 ## 9. 测试与证据
 
 ```powershell
-npm test             # 全部 77 项
+npm test             # 全部 89 项
 npm run test:unit    # 领域、前端状态
 npm run test:component
 npm run test:contracts
@@ -198,7 +201,7 @@ npm run test:fault   # 容错场景
 
 | 证据 | 内容 |
 | --- | --- |
-| [docs/evidence/tests.tap](docs/evidence/tests.tap) | 77 项测试、77 通过、0 失败 |
+| [docs/evidence/tests.tap](docs/evidence/tests.tap) | 11 月 26 日首次验证，77 项通过 |
 | [docs/evidence/contract-tests.tap](docs/evidence/contract-tests.tap) | 契约测试 3 项通过 |
 | [docs/evidence/gateway-trace.json](docs/evidence/gateway-trace.json) | 统一入口、实例 ID、订单 201/接单 200/详情 200、注册目录、容器状态与关联日志 |
 | [docs/evidence/scaling.json](docs/evidence/scaling.json) | order-query 1→2→1、两副本各 6 次请求 |
@@ -206,7 +209,7 @@ npm run test:fault   # 容错场景
 | [docs/evidence/fault-tolerance-docker.json](docs/evidence/fault-tolerance-docker.json) | 停止/恢复 driver 容器的实际表现 |
 | [docs/evidence/compose-ps.txt](docs/evidence/compose-ps.txt) | 7 个容器健康状态 |
 
-完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
+11 月 27 日在 Windows 和 Node.js v24.22.3 上复核，89 项自动化测试和 11 组真实 HTTP 服务验收通过。完整设计与验证说明见 [lab4-report.md](lab4-report.md)。
 
 ## 10. 目录结构
 
@@ -233,11 +236,11 @@ lab4-rideshare/
 
 ## 11. 与 Lab 3 的关系
 
-Lab 3 的 DDD 四层、CQRS、Saga/Outbox、77 项测试全部保留并通过。Lab 4 的主要改动：
+Lab 4 保留 Lab 3 的 DDD 四层、CQRS、Saga/Outbox 和业务测试，并补回 Lab 3 合入的 9 项回归测试。
 
 - 新增注册中心，所有服务启动即注册，调用方按注册名解析，不再依赖固定 URL。
 - 网关由静态地址改为服务发现 + 轮询 + GET 故障转移，并增加入口限流与 `X-Instance`。
-- `order-query` 改为可水平扩展：私有读模型、启动引导、事件扇出、inbox 去重。
+- `order-query` 通过私有读模型、启动引导、事件扇出和快照增量补齐支持水平扩展。
 - 新增容错模块、契约测试、Docker Compose 与治理证据。
 
 ## 12. 已知边界

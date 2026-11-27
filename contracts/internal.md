@@ -1,6 +1,6 @@
 # 服务内部 API、订单事件与恢复契约
 
-本契约对应当前 Lab 3 实现，不沿用 Lab 2 尚未实现的 gRPC / Kafka / 支付协议。公开入口以 [OpenAPI 3.0 JSON](openapi.json) 为准。内部接口不会经 Gateway 暴露；所有请求需要 `X-Internal-Token`，其值由环境配置统一提供。
+本契约对应 Lab 4 的服务协作与读模型同步。公开入口以 [OpenAPI 3.0 JSON](openapi.json) 为准。内部接口需要环境配置提供的 `X-Internal-Token`，仅在业务服务之间调用。
 
 ## 1. 基本约定
 
@@ -25,6 +25,7 @@
 | Dispatch | `POST /internal/offers/:id/claim` | `{order_id,driver_id,assignment_id}` → `{offer,claimed:true}` | PENDING 且未到期才可首次认领；同 assignment 的 CLAIMED / ACCEPTED 可重复确认 |
 | Dispatch | `POST /internal/offers/:id/resolve` | `{assignment_id,status:"FAILED"或"ACCEPTED"}` → `{offer,resolved:true}` | 只关闭本标识认领；终态任务不复活；不属于本标识返回 409 |
 | Order | `GET /internal/orders/:id` | 返回 `{order}` | 仅内部诊断 / 实现协作，不供查询服务回查写模型 |
+| Order | `GET /internal/orders/snapshots` | 可选 `after`，返回 `{generated_at,cursor,orders}` | 无游标时读取全量快照和匹配的游标。有游标时最多扫描 200 条新状态日志，返回涉及订单的当前快照 |
 | Order | `POST /internal/orders/:id/accept` | `{driver_id,offer_id}` → `{order}` | 同派单重复操作返回当前结果；创建持久化 Saga 后执行 claim / reserve |
 | Order | `POST /internal/orders/:id/fail-matching` | `{reason}` → `{order}` | 只允许 MATCHING → FAILED；重复 FAILED 成功；ASSIGNING 等阶段返回 409 |
 | Order | `GET /internal/diagnostics` | `{pending_jobs,pending_events}` | 列出恢复次数和末次错误，不包含令牌 |
@@ -53,6 +54,8 @@ stateDiagram-v2
 Order 为状态裁决唯一权威。开始后普通取消被拒绝。重复到达、开始、结束在首次有效操作已发生时返回当前聚合，首次时间与费用不重写，不回退到先前状态。每次真正变更都递增 `version`，与状态日志和 Outbox 共同提交。
 
 ## 4. 异步订单事件
+
+Query 与 Dispatch 统一检查事件类型、标识、时间和快照字段。无效事件返回 `400 INVALID_EVENT`，且不会消耗 Inbox 事件标识。Query 副本通过快照接口补取错过的事件，事件和快照共用订单版本约束。
 
 事件类型：`order.created.v1` 与 `order.changed.v1`。相同订单的版本从 1 单调递增；投递至 Query 和 Dispatch 两个目标，各自维护投递状态。
 

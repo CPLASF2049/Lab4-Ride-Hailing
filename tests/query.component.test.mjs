@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { CircuitBreaker } from '../common/resilience.mjs';
 import { createQuery } from '../services/query/service.mjs';
 import { Order } from '../services/order/domain/order.mjs';
 import { listen, request, sampleEstimate, testDirectory } from './helpers.mjs';
@@ -73,4 +74,51 @@ test('CQRS: malformed event rolls back without consuming its event id', async t 
   const res = await request(f.base, '/internal/events', { method: 'POST', body: malformed, internal: true });
   assert.equal(res.status, 400); assert.equal(f.service.db.prepare('SELECT COUNT(*) AS n FROM inbox').get().n, 0);
   assert.equal(f.service.db.prepare('SELECT COUNT(*) AS n FROM order_views').get().n, 0);
+});
+
+test('CQRS: malformed or mismatched driver profiles explicitly degrade the response', async t => {
+  let driver = null;
+  const breaker = new CircuitBreaker({ failureThreshold: 20 });
+  const service = createQuery({ dbPath: ':memory:', breaker, driverAttempts: 1, getDriver: async () => ({ driver }) });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  for (driver of [null, undefined, { id: 'driver-2' }, []]) {
+    const detail = await request(base, '/orders/ord-projection');
+    assert.equal(detail.status, 200);
+    assert.equal(detail.body.order.status, 'ACCEPTED');
+    assert.equal(detail.body.driver, null);
+    assert.equal(detail.body.partial, true);
+    assert.equal(detail.body.warnings[0].code, 'DRIVER_UNAVAILABLE');
+    const current = await request(base, '/orders/current', { actor: 'driver-1' });
+    assert.equal(current.status, 200);
+    assert.equal(current.body.order.id, 'ord-projection');
+    assert.equal(current.body.partial, true);
+  }
+});
+
+test('CQRS: a missing occupancy field is not treated as an available driver with no order', async t => {
+  const service = createQuery({ dbPath: ':memory:', driverAttempts: 1, getDriver: async id => ({ driver: { id } }) });
+  t.after(() => service.close());
+  const base = await listen(service);
+  service.project(event(snapshots().accepted));
+  const current = await request(base, '/orders/current', { actor: 'driver-1' });
+  assert.equal(current.status, 200);
+  assert.equal(current.body.order.id, 'ord-projection');
+  assert.equal(current.body.driver, null);
+  assert.equal(current.body.partial, true);
+  assert.equal(current.body.warnings[0].code, 'DRIVER_UNAVAILABLE');
+});
+
+test('CQRS: driver fallback orders trips by creation time rather than unrelated aggregate versions', async t => {
+  const service = createQuery({ dbPath: ':memory:', driverAttempts: 1, getDriver: async () => { throw new Error('down'); } });
+  t.after(() => service.close());
+  const base = await listen(service);
+  const accepted = snapshots().accepted;
+  service.project(event({ ...accepted, id: 'ord-old', version: 99, created_at: '2026-11-14T00:00:00.000Z' }, 'evt-old'));
+  service.project(event({ ...accepted, id: 'ord-new', version: 3, created_at: '2026-11-15T00:00:00.000Z' }, 'evt-new'));
+  const result = await request(base, '/orders/current', { actor: 'driver-1' });
+  assert.equal(result.status, 200);
+  assert.equal(result.body.order.id, 'ord-new');
+  assert.equal(result.body.partial, true);
 });

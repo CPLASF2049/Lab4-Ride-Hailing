@@ -137,6 +137,20 @@ test('Gateway HTTP boundary and service routing', async t => {
       await request('/api/orders', { method: 'POST', headers: rider, body: '{' }, 400);
       assert.equal(seen.length, countBefore);
     });
+
+    await t.test('non-object JSON, invalid UTF-8 and oversized bodies never reach a backend', async () => {
+      const rider = await login('rider-1');
+      const countBefore = seen.length;
+      for (const body of ['null', '[]', '1', '"text"']) {
+        const result = await request('/api/orders', { method: 'POST', headers: rider, body }, 400);
+        assert.equal(result.data.error.code, 'INVALID_BODY');
+      }
+      const invalid = Buffer.concat([Buffer.from('{"name":"'), Buffer.from([0xff]), Buffer.from('"}')]);
+      await request('/api/orders', { method: 'POST', headers: rider, body: invalid }, 400);
+      const large = await request('/api/orders', { method: 'POST', headers: rider, body: JSON.stringify({ text: '中'.repeat(22000) }) }, 413);
+      assert.equal(large.data.error.code, 'BODY_TOO_LARGE');
+      assert.equal(seen.length, countBefore);
+    });
   } finally {
     await gateway.close();
     await Promise.all(stubs.map(close));

@@ -76,7 +76,7 @@ async function harness(t, options = {}) {
     task(orderId = 'order-1') { return instance.db.prepare('SELECT * FROM dispatch_tasks WHERE order_id = ?').get(orderId); },
     offers(orderId = 'order-1') { return instance.db.prepare('SELECT * FROM offers WHERE order_id = ? ORDER BY created_at,id').all(orderId); },
     event(order, eventId = `event-${++eventCounter}`) {
-      return request('/internal/events', { event_id: eventId, event_type: `ORDER_${order.status}`, aggregate_id: order.id,
+      return request('/internal/events', { event_id: eventId, event_type: order.version === 1 ? 'order.created.v1' : 'order.changed.v1', aggregate_id: order.id,
         version: order.version, occurred_at: new Date().toISOString(), data: order });
     },
     tick() { return instance.tick(); },

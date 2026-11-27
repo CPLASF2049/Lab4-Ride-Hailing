@@ -4,12 +4,12 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { accounts, login, verify } from '../../common/auth.mjs';
+import { readBody, parseJsonObject } from '../../common/body.mjs';
 import { Discovery } from '../../common/discovery.mjs';
 import { RateLimiter } from '../../common/resilience.mjs';
 import { log } from '../../common/log.mjs';
 
 const FRONTEND_DIR = fileURLToPath(new URL('../../frontend/', import.meta.url));
-const MAX_BODY_BYTES = 64 * 1024;
 const ASSETS = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
@@ -48,17 +48,6 @@ function json(res, status, body, requestId, extraHeaders = {}) {
 
 function fail(status, code, message) {
   return Object.assign(new Error(message), { status, code });
-}
-
-async function readBody(req) {
-  const chunks = [];
-  let length = 0;
-  for await (const chunk of req) {
-    length += chunk.length;
-    if (length > MAX_BODY_BYTES) throw fail(413, 'BODY_TOO_LARGE', '请求内容过大');
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks);
 }
 
 function authorize(req, role) {
@@ -106,19 +95,26 @@ export function createGateway(options = {}) {
     // Reads fail over to another replica; writes stay on one target to avoid duplicate side effects.
     const targets = ['GET', 'HEAD'].includes(req.method) ? instances : instances.slice(0, 1);
     let lastError;
+    let queryUnavailable;
     for (let attempt = 0; attempt < targets.length; attempt++) {
       const instance = targets[attempt];
       try {
         const upstream = await fetch(new URL(`${businessPath}${search}`, instance.url), {
           method: req.method, headers, body, signal: AbortSignal.timeout(timeoutMs), redirect: 'error',
         });
+        const candidate = { upstream, instance, result: await upstream.text() };
+        if (service === 'order-query' && upstream.status === 503) {
+          queryUnavailable = candidate;
+          continue;
+        }
         if (attempt > 0) log('gateway', 'instance_failover', { service, instance: instance.id, attempt: attempt + 1 });
-        return { upstream, instance };
+        return candidate;
       } catch (error) {
         lastError = error;
         log('gateway', 'instance_unreachable', { service, instance: instance.id, code: error.name });
       }
     }
+    if (queryUnavailable) return queryUnavailable;
     const timedOut = lastError?.name === 'TimeoutError' || lastError?.name === 'AbortError';
     throw fail(timedOut ? 504 : 502, timedOut ? 'UPSTREAM_TIMEOUT' : 'SERVICE_UNAVAILABLE',
       timedOut ? '请求确认超时，请稍后刷新查看结果' : '服务暂时无法连接，请稍后重试');
@@ -150,11 +146,8 @@ export function createGateway(options = {}) {
         return json(res, 200, { accounts: accounts.map(safeAccount) }, requestId);
       }
       if (path === '/api/auth/login' && req.method === 'POST') {
-        const raw = await readBody(req);
-        let body;
-        try { body = JSON.parse(raw.toString('utf8')); }
-        catch { throw fail(400, 'INVALID_JSON', '请提交有效的 JSON 请求'); }
-        if (!body || typeof body.account_id !== 'string') {
+        const body = parseJsonObject(await readBody(req), { allowEmpty: false });
+        if (typeof body.account_id !== 'string') {
           throw fail(400, 'INVALID_ACCOUNT', '请选择有效的账号');
         }
         return json(res, 200, await login(body.account_id), requestId);
@@ -198,13 +191,9 @@ export function createGateway(options = {}) {
         if (!['GET', 'HEAD'].includes(req.method)) {
           body = await readBody(req);
           headers['Content-Type'] = 'application/json';
-          if (body.length) {
-            try { JSON.parse(body.toString('utf8')); }
-            catch { throw fail(400, 'INVALID_JSON', '请提交有效的 JSON 请求'); }
-          }
+          parseJsonObject(body);
         }
-        const { upstream, instance } = await proxy(service, businessPath, url.search, req, headers, body);
-        const result = await upstream.text();
+        const { upstream, instance, result } = await proxy(service, businessPath, url.search, req, headers, body);
         if (result.length) {
           try { JSON.parse(result); }
           catch { throw fail(502, 'INVALID_UPSTREAM_RESPONSE', '服务暂时无法返回结果，请稍后重试'); }

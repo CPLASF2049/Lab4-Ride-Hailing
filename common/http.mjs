@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { randomUUID } from 'node:crypto';
 import { verify, verifyInternal } from './auth.mjs';
+import { readBody, parseJsonObject } from './body.mjs';
 
 import { AppError as HttpError } from './errors.mjs';
 import { log } from './log.mjs';
@@ -17,7 +18,9 @@ export function createServer({ service, routes, onClose }) {
     res.setHeader('Cache-Control', 'no-store');
     try {
       const url = new URL(req.url, 'http://localhost');
-      const parts = url.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+      let parts;
+      try { parts = url.pathname.split('/').filter(Boolean).map(decodeURIComponent); }
+      catch { throw new HttpError(400, 'INVALID_PATH', '请求路径无效'); }
       const route = compiled.find(r => r.method === req.method && r.parts.length === parts.length && r.parts.every((v, i) => v.startsWith(':') || v === parts[i]));
       if (!route) throw new HttpError(404, 'NOT_FOUND', '接口不存在');
       const actor = verify(req.headers.authorization);
@@ -27,17 +30,7 @@ export function createServer({ service, routes, onClose }) {
         if (!actor) throw new HttpError(401, 'UNAUTHORIZED', '请先选择账号登录');
         if (route.role !== 'ANY' && actor.role !== route.role) throw new HttpError(403, 'FORBIDDEN', '当前身份无权执行此操作');
       }
-      let raw = ''; let bytes = 0;
-      for await (const chunk of req) {
-        bytes += chunk.length;
-        if (bytes > 65536) throw new HttpError(413, 'BODY_TOO_LARGE', '请求内容过大');
-        raw += chunk;
-      }
-      let body = {};
-      if (raw) {
-        try { body = JSON.parse(raw); } catch { throw new HttpError(400, 'INVALID_JSON', '请求内容须为有效 JSON'); }
-        if (!body || typeof body !== 'object' || Array.isArray(body)) throw new HttpError(400, 'INVALID_BODY', '请求内容须为 JSON 对象');
-      }
+      const body = parseJsonObject(await readBody(req));
       const params = Object.fromEntries(route.parts.flatMap((v, i) => v.startsWith(':') ? [[v.slice(1), parts[i]]] : []));
       const result = await route.handler({ req, res, params, query: url.searchParams, body, actor, requestId });
       const status = result?.[responseTag] ? result.status : 200;
